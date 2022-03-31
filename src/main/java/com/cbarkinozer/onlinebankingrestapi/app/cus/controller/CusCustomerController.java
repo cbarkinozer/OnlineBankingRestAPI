@@ -1,6 +1,8 @@
 package com.cbarkinozer.onlinebankingrestapi.app.cus.controller;
 
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerDto;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerUpdateDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.entity.CusCustomer;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.service.CusCustomerService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
@@ -24,26 +26,37 @@ public class CusCustomerController {
         return ResponseEntity.ok(RestResponse.of(cusCustomerDtoList));
     }
 
-    /*
-    @GetMapping
-    public ResponseEntity findCustomerByd(){
 
+    @GetMapping("/{id}")
+    public ResponseEntity<RestResponse<CusCustomerDto>> findCustomerById(@PathVariable Long id){
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.findCustomerById(id);
+
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
     }
 
-    @PostMapping
-    public ResponseEntity saveCustomer(){
 
+    @PostMapping("/save-customer")
+    public ResponseEntity<RestResponse<CusCustomerDto>> saveCustomer(CusCustomerSaveDto cusCustomerSaveDto){
+
+        CusCustomerDto cusCustomerDto = cusCustomerService.saveCustomer(cusCustomerSaveDto);
+
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
     }
 
-    @PutMapping
-    public ResponseEntity updateCustomer(){
+    @PutMapping("/update-customer")
+    public ResponseEntity<RestResponse<CusCustomerDto>> updateCustomer(CusCustomerUpdateDto cusCustomerUpdateDto){
 
+        CusCustomerDto cusCustomerDto = cusCustomerService.updateCustomer(cusCustomerUpdateDto);
+
+        return ResponseEntity.ok(RestResponse.of(cusCustomerDto));
     }
 
-    @PatchMapping
-    public ResponseEntity cancelCustomer(){
+    @DeleteMapping("delete-customer/{id}")
+    public ResponseEntity<RestResponse<?>> deleteCustomer(@PathVariable Long id){
 
+        cusCustomerService.deleteCustomer(id);
+
+        return ResponseEntity.ok(RestResponse.empty());
     }
-
-     */
 }

@@ -29,7 +29,4 @@ public class CusCustomer extends BaseEntity {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS_TYPE", length = 30, nullable = false)
-    private GenStatusType statusType;
 }

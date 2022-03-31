@@ -1,6 +1,8 @@
 package com.cbarkinozer.onlinebankingrestapi.app.cus.converter;
 
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerDto;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerUpdateDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.entity.CusCustomer;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -17,4 +19,7 @@ public interface CusCustomerMapper {
 
     CusCustomerDto convertToCusCustomerDto(CusCustomer cusCustomer);
 
+    CusCustomer convertToCusCustomer(CusCustomerSaveDto cusCustomerSaveDto);
+
+    CusCustomer convertToCusCustomer(CusCustomerUpdateDto cusCustomerUpdateDto);
 }

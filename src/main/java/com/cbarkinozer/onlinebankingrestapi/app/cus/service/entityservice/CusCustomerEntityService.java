@@ -19,8 +19,16 @@ public class CusCustomerEntityService extends BaseEntityService<CusCustomer, Cus
 
     public List<CusCustomer> findAllCustomers() {
 
-        List<CusCustomer> cusCustomerList = getDao().findAllByStatusType(GenStatusType.ACTIVE);
+        List<CusCustomer> cusCustomerList = getDao().findAll();
 
         return cusCustomerList;
     }
+
+    public CusCustomer saveCustomer(CusCustomer cusCustomer) {
+
+        cusCustomer = getDao().save(cusCustomer);
+
+        return cusCustomer;
+    }
+
 }
