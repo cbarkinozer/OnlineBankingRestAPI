@@ -1,7 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.cus.entity;
 
 import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
-import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenStatusType;
 import lombok.Getter;
 import lombok.Setter;
 

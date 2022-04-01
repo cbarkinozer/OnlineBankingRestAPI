@@ -42,6 +42,9 @@ public class CusCustomerService {
 
         CusCustomer cusCustomer = CusCustomerMapper.INSTANCE.convertToCusCustomer(cusCustomerSaveDto);
 
+        cusCustomerValidationService.controlAreFieldsNonNull(cusCustomer);
+        cusCustomerValidationService.controlIsIdentityNoUnique(cusCustomer);
+
         cusCustomer = cusCustomerEntityService.saveCustomer(cusCustomer);
 
         CusCustomerDto cusCustomerDto = CusCustomerMapper.INSTANCE.convertToCusCustomerDto(cusCustomer);
@@ -51,7 +54,13 @@ public class CusCustomerService {
 
     public CusCustomerDto updateCustomer(CusCustomerUpdateDto cusCustomerUpdateDto) {
 
+        Long id = cusCustomerUpdateDto.getId();
+        cusCustomerValidationService.controlIsCustomerExist(id);
+
         CusCustomer cusCustomer = CusCustomerMapper.INSTANCE.convertToCusCustomer(cusCustomerUpdateDto);
+
+        cusCustomerValidationService.controlAreFieldsNonNull(cusCustomer);
+        cusCustomerValidationService.controlIsIdentityNoUnique(cusCustomer);
 
         cusCustomer = cusCustomerEntityService.saveCustomer(cusCustomer);
 

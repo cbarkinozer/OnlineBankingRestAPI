@@ -14,3 +14,6 @@ https://ibb.co/NmHVL3b
 
 ### Design of the packages, entities, and controllers  
 https://ibb.co/Wgg9Fg8         
+
+### Design Notes
+I do not check identity No (citizen id) by algorithm because I want this API to be international.    
