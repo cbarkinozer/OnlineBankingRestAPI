@@ -39,4 +39,9 @@ public class RestResponse<T> implements Serializable {
     public void setMessages(String messages) {
         this.messages = messages;
     }
+
+    public String getMessage(){
+        return messages;
+    }
+
 }
