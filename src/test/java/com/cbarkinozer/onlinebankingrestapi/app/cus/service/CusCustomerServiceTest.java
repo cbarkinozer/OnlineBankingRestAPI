@@ -45,6 +45,7 @@ class CusCustomerServiceTest {
     }
 
     private CusCustomer createDummyCusCustomer(){
+
         CusCustomer cusCustomer = new CusCustomer();
         cusCustomer.setId(1L);
         cusCustomer.setName("testName");
@@ -57,8 +58,10 @@ class CusCustomerServiceTest {
     private List<CusCustomer> createDummyCusCustomerList(){
 
         List<CusCustomer>  cusCustomerList = new ArrayList<>();
+
         CusCustomer dummyCusCustomer = createDummyCusCustomer();
         cusCustomerList.add(dummyCusCustomer);
+
         return cusCustomerList;
     }
 
@@ -75,8 +78,10 @@ class CusCustomerServiceTest {
     private List<CusCustomerDto> createDummyCusCustomerDtoList(){
 
         List<CusCustomerDto>  cusCustomerDtoList = new ArrayList<>();
+
         CusCustomerDto dummyCusCustomerDto = createDummyCusCustomerDto();
         cusCustomerDtoList.add(dummyCusCustomerDto);
+
         return cusCustomerDtoList;
     }
 
@@ -98,19 +103,40 @@ class CusCustomerServiceTest {
     @Test
     void shouldSaveCustomer() {
 
+        CusCustomerDto cusCustomerDto = createDummyCusCustomerDto();
+        CusCustomer cusCustomer = createDummyCusCustomer();
 
+        when(cusCustomerEntityService.saveCustomer(any())).thenReturn(cusCustomer);
+
+        CusCustomerDto result = cusCustomerService.saveCustomer(any());
+
+        assertEquals(cusCustomerDto, result);
+        assertNotNull(result);
     }
 
     @Test
     void shouldUpdateCustomer() {
+
+        CusCustomerDto cusCustomerDto = createDummyCusCustomerDto();
+        CusCustomer cusCustomer = createDummyCusCustomer();
+
+        when(cusCustomerEntityService.saveCustomer(any())).thenReturn(cusCustomer);
+
+        CusCustomerDto result = cusCustomerService.saveCustomer(any());
+
+        assertEquals(cusCustomerDto, result);
+        assertNotNull(result);
     }
 
     @Test
     void shouldDeleteCustomer() {
 
         CusCustomer cusCustomer = createDummyCusCustomer();
-        doNothing().when(cusCustomerEntityService).delete(cusCustomer);
+
+        when(cusCustomerEntityService.getByIdWithControl(anyLong())).thenReturn(cusCustomer);
+
         cusCustomerService.deleteCustomer(anyLong());
-        verify(cusCustomerEntityService).delete(cusCustomer);
+
+        verify(cusCustomerEntityService).getByIdWithControl(anyLong());
     }
 }
