@@ -2,6 +2,7 @@ package com.cbarkinozer.onlinebankingrestapi.app.cus.controller;
 
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerUpdateDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.service.CusCustomerService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.BaseTest;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
@@ -45,6 +46,12 @@ class CusCustomerControllerTest extends BaseTest {
         assertNotNull(result);
     }
 
+    @Test
+    void shouldNotFindAllCustomers_WhenCusCustomer_DoesNotExist(){
+
+        
+    }
+
     private CusCustomerDto createDummyCusCustomerDto(){
 
         CusCustomerDto cusCustomerDto = mock(CusCustomerDto.class);
@@ -86,7 +93,6 @@ class CusCustomerControllerTest extends BaseTest {
 
         CusCustomerSaveDto dummyCusCustomerSaveDto = createDummyCusCustomerSaveDto();
         CusCustomerDto dummyCusCustomerDto = createDummyCusCustomerDto();
-        MappingJacksonValue mappingJacksonValue = mock(MappingJacksonValue.class);
 
         when(cusCustomerService.saveCustomer(dummyCusCustomerSaveDto)).thenReturn(dummyCusCustomerDto);
 
@@ -112,10 +118,43 @@ class CusCustomerControllerTest extends BaseTest {
 
     @Test
     void shouldUpdateCustomer() {
+
+        CusCustomerDto dummyCusCustomerDto = createDummyCusCustomerDto();
+        CusCustomerUpdateDto dummyCusCustomerUpdateDto = createDummyCusCustomerUpdateDto();
+
+        when(cusCustomerService.updateCustomer(dummyCusCustomerUpdateDto)).thenReturn(dummyCusCustomerDto);
+
+        ResponseEntity<RestResponse<CusCustomerDto>> result = cusCustomerController.updateCustomer(dummyCusCustomerUpdateDto);
+
+        assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
+        assertEquals(result.getBody().getData(),dummyCusCustomerDto);
+        assertNull(result.getBody().getMessage());
+        assertNotNull(result);
+    }
+
+    private CusCustomerUpdateDto createDummyCusCustomerUpdateDto(){
+
+        CusCustomerUpdateDto cusCustomerUpdateDto = mock(CusCustomerUpdateDto.class);
+
+        cusCustomerUpdateDto.setId(1L);
+        cusCustomerUpdateDto.setName("testName");
+        cusCustomerUpdateDto.setSurname("testSurname");
+        cusCustomerUpdateDto.setIdentityNo(1L);
+        cusCustomerUpdateDto.setPassword("test1234");
+
+        return  cusCustomerUpdateDto;
     }
 
     @Test
     void shouldDeleteCustomer() {
+
+        doNothing().when(cusCustomerService).deleteCustomer(anyLong());
+        ResponseEntity<RestResponse<?>> result = cusCustomerController.deleteCustomer(1L);
+
+        assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
+        assertNull(result.getBody().getData());
+        assertNull(result.getBody().getMessage());
+        assertNotNull(result);
     }
 
 
