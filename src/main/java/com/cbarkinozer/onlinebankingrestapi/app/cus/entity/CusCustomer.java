@@ -22,10 +22,10 @@ public class CusCustomer extends BaseEntity {
     @Column(name="SURNAME",length=100, nullable = false)
     private String surname;
 
-    @Column(name="IDENTITY_NO",length=15,nullable = false,unique = true)
+    @Column(name="IDENTITY_NO",length=20,nullable = false,unique = true)
     private Long identityNo;
 
-    @Column(name = "PASSWORD", nullable = false)
+    @Column(name = "PASSWORD",length=100, nullable = false)
     private String password;
 
 }
