@@ -13,7 +13,8 @@ Kafka(message broker), log4j(logging).
 https://ibb.co/NmHVL3b    
 
 ### Design of the packages, entities, and controllers  
-https://ibb.co/Wgg9Fg8         
+https://ibb.co/2t5Cq3q  
+https://ibb.co/LzWWCpz  
 
 ### Design Notes
 I do not check identity No (citizen id) by algorithm because I want this API to be international.    
