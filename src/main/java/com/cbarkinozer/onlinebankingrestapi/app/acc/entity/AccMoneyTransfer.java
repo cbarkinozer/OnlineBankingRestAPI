@@ -1,6 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.entity;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccTransferType;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccMoneyTransferType;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,5 +38,5 @@ public class AccMoneyTransfer extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name="TRANSFER_TYPE",length=30,nullable = false)
-    private AccTransferType transferType;
+    private AccMoneyTransferType transferType;
 }

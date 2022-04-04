@@ -5,6 +5,7 @@ import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ import java.util.Optional;
 public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepository<E, Long>> {
 
     private final D dao;
+
+    private static final Integer DEFAULT_PAGE = 0;
+    private static final Integer DEFAULT_SIZE = 10;
 
     public List<E> findAll(){
 
@@ -72,6 +76,32 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
         }
 
         return entity;
+    }
+
+    protected PageRequest getPageRequest(Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
+        Integer page = getPage(pageOptional);
+        Integer size = getSize(sizeOptional);
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return pageRequest;
+    }
+
+    protected Integer getSize(Optional<Integer> sizeOptional) {
+
+        Integer size = DEFAULT_SIZE;
+        if (sizeOptional.isPresent()){
+            size = sizeOptional.get();
+        }
+        return size;
+    }
+
+    protected Integer getPage(Optional<Integer> pageOptional) {
+
+        Integer page = DEFAULT_PAGE;
+        if (pageOptional.isPresent()){
+            page = pageOptional.get();
+        }
+        return page;
     }
 
     public boolean existsById(Long id){

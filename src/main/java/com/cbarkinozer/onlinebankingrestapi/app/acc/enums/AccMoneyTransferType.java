@@ -1,6 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.enums;
 
-public enum AccTransferType {
+public enum AccMoneyTransferType {
     RENTAL,
     DUE
 }

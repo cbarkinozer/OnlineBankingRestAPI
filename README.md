@@ -17,4 +17,6 @@ https://ibb.co/2t5Cq3q
 https://ibb.co/LzWWCpz  
 
 ### Design Notes
-I do not check identity No (citizen id) by algorithm because I want this API to be international.    
+I do not check identity No (citizen id) by algorithm because I want this API to be international.   
+There is no update for AccAccount because Accounts do not get updated.   
+AccAccount has the method cancel instead of the method delete because Accounts should never be deleted.  

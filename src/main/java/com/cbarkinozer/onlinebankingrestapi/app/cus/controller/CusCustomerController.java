@@ -81,7 +81,7 @@ public class CusCustomerController {
             )
     )
     @PostMapping("/save-customer")
-    public ResponseEntity<RestResponse<MappingJacksonValue>> saveCustomer(CusCustomerSaveDto cusCustomerSaveDto){
+    public ResponseEntity<RestResponse<MappingJacksonValue>> saveCustomer(@RequestBody CusCustomerSaveDto cusCustomerSaveDto){
 
         CusCustomerDto cusCustomerDto = cusCustomerService.saveCustomer(cusCustomerSaveDto);
 
@@ -109,7 +109,7 @@ public class CusCustomerController {
             description = "Updates customers all fields."
     )
     @PutMapping("/update-customer")
-    public ResponseEntity<RestResponse<CusCustomerDto>> updateCustomer(CusCustomerUpdateDto cusCustomerUpdateDto){
+    public ResponseEntity<RestResponse<CusCustomerDto>> updateCustomer(@RequestBody CusCustomerUpdateDto cusCustomerUpdateDto){
 
         CusCustomerDto cusCustomerDto = cusCustomerService.updateCustomer(cusCustomerUpdateDto);
 
