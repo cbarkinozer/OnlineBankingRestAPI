@@ -1,8 +1,9 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.converter;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccountActivity;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccMoneyTransfer;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
@@ -19,5 +20,11 @@ public interface AccAccountMapper {
     List<AccAccountDto> convertToAccAccountDtoList(List<AccAccount> accAccountList);
 
     AccAccount convertToAccAccount(AccAccountSaveDto accAccountSaveDto);
+
+    AccMoneyTransfer convertToAccMoneyTransfer(AccMoneyTransferSaveDto accMoneyTransferSaveDto);
+
+    AccMoneyTransferDto convertToAccMoneyTransferDto(AccMoneyTransfer accMoneyTransfer);
+
+    AccAccountActivityDto convertToAccAccountActivityDto(AccAccountActivity accAccountActivity);
 
 }

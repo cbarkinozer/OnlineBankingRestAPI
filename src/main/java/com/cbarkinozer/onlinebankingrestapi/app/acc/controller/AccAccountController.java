@@ -1,10 +1,9 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.controller;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountSaveDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyTransferDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyTransferSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.*;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.service.AccAccountActivityService;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.AccAccountService;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.service.AccMoneyTransferService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,8 @@ import java.util.Optional;
 public class AccAccountController {
 
     private final AccAccountService accAccountService;
+    private final AccMoneyTransferService accMoneyTransferService;
+    private final AccAccountActivityService accAccountActivityService;
 
     @GetMapping
     public ResponseEntity<RestResponse<List<AccAccountDto>>> findAllAccounts(Optional<Integer> pageOptional,
@@ -60,6 +61,30 @@ public class AccAccountController {
 
         return ResponseEntity.ok(RestResponse.empty());
     }
-    
+
+    @PostMapping("/transfer-money")
+    public ResponseEntity<RestResponse<AccMoneyTransferDto>> transferMoney(
+            @RequestBody AccMoneyTransferSaveDto accMoneyTransferSaveDto){
+
+        AccMoneyTransferDto accMoneyTransferDto = accMoneyTransferService.transferMoney(accMoneyTransferSaveDto);
+
+        return ResponseEntity.ok(RestResponse.of(accMoneyTransferDto));
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<RestResponse<AccAccountActivityDto>> withdraw(@RequestBody AccMoneyActivityRequestDto accMoneyActivityRequestDto){
+
+        AccAccountActivityDto accAccountActivityDto = accAccountActivityService.withdraw(accMoneyActivityRequestDto);
+
+        return ResponseEntity.ok(RestResponse.of(accAccountActivityDto));
+    }
+
+    @PostMapping("/deposit")
+    public ResponseEntity<RestResponse<AccAccountActivityDto>> deposit(@RequestBody AccMoneyActivityRequestDto accMoneyActivityRequestDto){
+
+        AccAccountActivityDto accAccountActivityDto = accAccountActivityService.deposit(accMoneyActivityRequestDto);
+
+        return ResponseEntity.ok(RestResponse.of(accAccountActivityDto));
+    }
 
 }
