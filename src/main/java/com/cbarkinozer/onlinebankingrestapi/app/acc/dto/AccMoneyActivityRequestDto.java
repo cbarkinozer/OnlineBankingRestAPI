@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class AccMoneyActivityRequestDto {
 
-    private Long accAccountId;
+    private Long accountId;
     private BigDecimal amount;
 
 }

@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 public class AccAccountActivityDto {
 
-    private Long accAccountId;
+    private Long accountId;
     private BigDecimal amount;
     private LocalDate transactionDate;
     private BigDecimal currentBalance;

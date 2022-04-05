@@ -19,6 +19,7 @@ import java.util.Optional;
 public class AccAccountService {
 
     private final AccAccountEntityService accAccountEntityService;
+    private final AccAccountValidationService accAccountValidationService;
 
     public List<AccAccountDto> findAllAccounts(Optional<Integer> pageOptional,
                                                Optional<Integer> sizeOptional) {
@@ -51,6 +52,8 @@ public class AccAccountService {
     public AccAccountDto saveAccount(AccAccountSaveDto accAccountSaveDto) {
 
         AccAccount accAccount = AccAccountMapper.INSTANCE.convertToAccAccount(accAccountSaveDto);
+
+        accAccountValidationService.controlIsIbanNoUnique(accAccount);
 
         accAccount.setStatusType(GenStatusType.ACTIVE);
         accAccount = accAccountEntityService.save(accAccount);

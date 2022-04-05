@@ -20,3 +20,4 @@ https://ibb.co/LzWWCpz
 I do not check identity No (citizen id) by algorithm because I want this API to be international.   
 There is no update for AccAccount because Accounts do not get updated.   
 AccAccount has the method cancel instead of the method delete because Accounts should never be deleted.  
+FindAll methods get active items, but findById methods get both active and passive items.  

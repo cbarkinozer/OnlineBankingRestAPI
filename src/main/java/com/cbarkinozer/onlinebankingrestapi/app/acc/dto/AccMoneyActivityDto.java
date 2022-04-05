@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Builder
 public class AccMoneyActivityDto {
 
-    private Long accAccountId;
+    private Long accountId;
     private BigDecimal amount;
     private AccAccountActivityType activityType;
 

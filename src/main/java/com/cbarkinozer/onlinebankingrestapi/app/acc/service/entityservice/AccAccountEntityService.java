@@ -1,5 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice;
 
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dao.AccAccountActivityDao;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dao.AccAccountDao;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;
@@ -48,4 +49,16 @@ public class AccAccountEntityService extends BaseEntityService<AccAccount, AccAc
         return accAccount;
     }
 
+    public Optional<AccAccount> findAccountByIbanNo(Long id, String ibanNo) {
+        Optional<AccAccount> accountOptional = getDao().findByIbanNo(id,ibanNo);
+
+        return accountOptional;
+    }
+
+    public Optional<AccAccount> findAccountById(Long id) {
+
+        Optional<AccAccount> accountOptional = getDao().findById(id);
+
+        return accountOptional;
+    }
 }

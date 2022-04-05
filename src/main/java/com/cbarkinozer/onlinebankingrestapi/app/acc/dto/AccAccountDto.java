@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class AccAccountDto {
 
     private Long id;
-    private Long cusCustomerId;
+    private Long customerId;
     private String ibanNo;
     private BigDecimal currentBalance;
     private AccCurrencyType currencyType;

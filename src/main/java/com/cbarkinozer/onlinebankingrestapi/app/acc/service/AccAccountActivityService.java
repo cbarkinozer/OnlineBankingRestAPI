@@ -10,7 +10,6 @@ import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccAccountActivityType
 import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountEntityService;
-import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.GenBusinessException;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +26,13 @@ public class AccAccountActivityService {
 
     private final AccAccountEntityService accAccountEntityService;
     private final AccAccountActivityEntityService accAccountActivityEntityService;
+    private final AccAccountValidationService accAccountValidationService;
 
     public AccAccountActivity moneyOut(AccMoneyActivityDto accMoneyActivityDto) {
 
         controlIsMoneyActivityDtoNull(accMoneyActivityDto);
 
-        Long accountId = accMoneyActivityDto.getAccAccountId();
+        Long accountId = accMoneyActivityDto.getAccountId();
         BigDecimal amount = accMoneyActivityDto.getAmount();
         AccAccountActivityType activityType = accMoneyActivityDto.getActivityType();
 
@@ -53,7 +53,7 @@ public class AccAccountActivityService {
 
         controlIsMoneyActivityDtoNull(accMoneyActivityDto);
 
-        Long accountId = accMoneyActivityDto.getAccAccountId();
+        Long accountId = accMoneyActivityDto.getAccountId();
         BigDecimal amount = accMoneyActivityDto.getAmount();
         AccAccountActivityType activityType = accMoneyActivityDto.getActivityType();
 
@@ -111,11 +111,13 @@ public class AccAccountActivityService {
 
         controlIsMoneyActivityRequestDtoNull(accMoneyActivityRequestDto);
 
-        Long accAccountId = accMoneyActivityRequestDto.getAccAccountId();
+        Long accAccountId = accMoneyActivityRequestDto.getAccountId();
         BigDecimal amount = accMoneyActivityRequestDto.getAmount();
 
+        accAccountValidationService.controlIsAccountIdExist(accAccountId);
+
         AccMoneyActivityDto accMoneyActivityDto = AccMoneyActivityDto.builder()
-                .accAccountId(accAccountId)
+                .accountId(accAccountId)
                 .amount(amount)
                 .activityType(AccAccountActivityType.WITHDRAW)
                 .build();
@@ -131,11 +133,13 @@ public class AccAccountActivityService {
 
         controlIsMoneyActivityRequestDtoNull(accMoneyActivityRequestDto);
 
-        Long accAccountId = accMoneyActivityRequestDto.getAccAccountId();
+        Long accAccountId = accMoneyActivityRequestDto.getAccountId();
         BigDecimal amount = accMoneyActivityRequestDto.getAmount();
 
+        accAccountValidationService.controlIsAccountIdExist(accAccountId);
+
         AccMoneyActivityDto accMoneyActivityDto = AccMoneyActivityDto.builder()
-                .accAccountId(accAccountId)
+                .accountId(accAccountId)
                 .amount(amount)
                 .activityType(AccAccountActivityType.DEPOSIT)
                 .build();
