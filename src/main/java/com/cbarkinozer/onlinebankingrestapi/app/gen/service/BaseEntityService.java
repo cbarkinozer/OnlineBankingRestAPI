@@ -4,7 +4,10 @@ import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseAdditionalFields;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
+import com.cbarkinozer.onlinebankingrestapi.app.sec.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,14 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
 
     private static final Integer DEFAULT_PAGE = 0;
     private static final Integer DEFAULT_SIZE = 10;
+
+    private AuthenticationService authenticationService;
+
+    /** For Circular dependency*/
+    @Autowired
+    public void setAuthenticationService(@Lazy AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     public List<E> findAll(){
 
@@ -110,6 +121,11 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
 
     public D getDao() {
         return dao;
+    }
+
+    public Long getCurrentCustomerId() {
+        Long currentCustomerId = authenticationService.getCurrentCustomerId();
+        return currentCustomerId;
     }
 
 

@@ -26,7 +26,6 @@ public class AccAccountActivity extends BaseEntity {
     @Column(name="AMOUNT",precision=19,scale=2,nullable = false)
     private BigDecimal amount;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="TRANSACTION_DATE",nullable = false)
     private LocalDate transactionDate;
 

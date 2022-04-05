@@ -22,10 +22,9 @@ public class AccAccountController {
     private final AccAccountActivityService accAccountActivityService;
 
     @GetMapping
-    public ResponseEntity<RestResponse<List<AccAccountDto>>> findAllAccounts(Optional<Integer> pageOptional,
-                                                                       Optional<Integer> sizeOptional){
+    public ResponseEntity<RestResponse<List<AccAccountDto>>> findAllAccounts(){
 
-        List<AccAccountDto> accAccountDtoList = accAccountService.findAllAccounts(pageOptional, sizeOptional);
+        List<AccAccountDto> accAccountDtoList = accAccountService.findAllAccounts();
 
         return ResponseEntity.ok(RestResponse.of(accAccountDtoList));
     }

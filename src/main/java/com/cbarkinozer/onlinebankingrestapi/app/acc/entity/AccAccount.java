@@ -43,7 +43,6 @@ public class AccAccount extends BaseEntity {
     @Column(name="STATUS_TYPE",length=30,nullable = false)
     private GenStatusType statusType;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="CANCEL_DATE",nullable = true)
     private LocalDate cancelDate;
 }

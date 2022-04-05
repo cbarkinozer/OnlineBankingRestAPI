@@ -18,4 +18,6 @@ public interface CusCustomerDao extends JpaRepository<CusCustomer,Long> {
                     "AND customer.id <> :id "
     )
     Optional<CusCustomer> findByIdentityNo(@Param("id") Long id ,@Param("identityNo") Long identityNo);
+
+    Optional<CusCustomer> findByIdentityNo(Long identityNo);
 }

@@ -2,6 +2,8 @@ package com.cbarkinozer.onlinebankingrestapi.app.cus.service.entityservice;
 
 import com.cbarkinozer.onlinebankingrestapi.app.cus.entity.CusCustomer;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dao.CusCustomerDao;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.enums.CusErrorMessage;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.service.BaseEntityService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,5 +38,21 @@ public class CusCustomerEntityService extends BaseEntityService<CusCustomer, Cus
         Optional<CusCustomer> cusCustomerOptional = getDao().findByIdentityNo(id,identityNo);
 
         return cusCustomerOptional;
+    }
+
+    public CusCustomer findByIdentityNo(Long identityNo) {
+
+        CusCustomer cusCustomer = getDao().findByIdentityNo(identityNo)
+                .orElseThrow(()-> new ItemNotFoundException(CusErrorMessage.CUSTOMER_NOT_FOUND));
+
+       return cusCustomer;
+    }
+
+    public CusCustomer findCustomerById(Long id){
+
+        CusCustomer cusCustomer = super.findById(id)
+                .orElseThrow(()-> new ItemNotFoundException(CusErrorMessage.CUSTOMER_NOT_FOUND));
+
+        return cusCustomer;
     }
 }

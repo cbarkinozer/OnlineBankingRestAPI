@@ -7,6 +7,7 @@ import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerUpdateDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.entity.CusCustomer;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.service.entityservice.CusCustomerEntityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class CusCustomerService {
 
     public final CusCustomerEntityService cusCustomerEntityService;
     public final CusCustomerValidationService cusCustomerValidationService;
+    private final PasswordEncoder passwordEncoder;
 
     public List<CusCustomerDto> findAllCustomers(){
 
@@ -42,6 +44,9 @@ public class CusCustomerService {
 
         CusCustomer cusCustomer = CusCustomerMapper.INSTANCE.convertToCusCustomer(cusCustomerSaveDto);
 
+        String password = passwordEncoder.encode(cusCustomer.getPassword());
+        cusCustomer.setPassword(password);
+
         cusCustomerValidationService.controlAreFieldsNonNull(cusCustomer);
         cusCustomerValidationService.controlIsIdentityNoUnique(cusCustomer);
 
@@ -61,6 +66,14 @@ public class CusCustomerService {
 
         cusCustomerValidationService.controlAreFieldsNonNull(cusCustomer);
         cusCustomerValidationService.controlIsIdentityNoUnique(cusCustomer);
+
+        String password = cusCustomerEntityService.findCustomerById(id).getPassword();
+        boolean passwordIsSame = cusCustomer.getPassword().equals(password);
+
+        if(!passwordIsSame){
+            String newPassword = passwordEncoder.encode(cusCustomer.getPassword());
+            cusCustomer.setPassword(newPassword);
+        }
 
         cusCustomer = cusCustomerEntityService.saveCustomer(cusCustomer);
 

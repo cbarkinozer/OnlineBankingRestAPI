@@ -69,10 +69,10 @@ public class CusCustomerController {
                                                     summary = "New Customer Example",
                                                     description = "Complete request with all available fields for customer.",
                                                     value = "{\n" +
-                                                            "  \"name\": \"john\",\n" +
-                                                            "  \"surname\": \"smith\",\n" +
-                                                            "  \"identityNo\": 10000000146,\n" +
-                                                            "  \"password\": \"J.s_1234\"\n" +
+                                                            "  \"name\": \"string1\",\n" +
+                                                            "  \"surname\": \"string1\",\n" +
+                                                            "  \"identityNo\": 1,\n" +
+                                                            "  \"password\": \"string1\"\n" +
                                                             "}"
                                             )
                                     }
