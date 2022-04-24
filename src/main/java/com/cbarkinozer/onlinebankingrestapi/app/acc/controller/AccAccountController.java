@@ -97,7 +97,7 @@ public class AccAccountController {
             summary = "Cancel an Account",
             description = "Deletes a user by canceling (setting the status type passive) by id."
     )
-    @PatchMapping("cancel-account/{id}")
+    @PatchMapping("/cancel-account/{id}")
     public ResponseEntity<RestResponse<?>> cancelAccount(@PathVariable Long id){
 
         accAccountService.cancelAccount(id);

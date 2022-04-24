@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {OnlinebankingrestapiApplication.class, H2TestProfileJPAConfig.class})
 public class CusCustomerControllerIntegrationTest extends BaseTest {
 
-    private static final String BASE_PATH = "/customers";
+    private static final String BASE_PATH = "/api/v1/customers";
 
     private MockMvc mockMvc;
 
@@ -84,7 +84,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
         String content = objectMapper.writeValueAsString(cusCustomerSaveDto);
 
         MvcResult result = mockMvc.perform(
-                post(BASE_PATH+"/save-customer").content(content).contentType(MediaType.APPLICATION_JSON)
+                post(BASE_PATH+"/save-customer/").content(content).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -103,7 +103,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
         String content = objectMapper.writeValueAsString(cusCustomerSaveDto);
 
         MvcResult result = mockMvc.perform(
-                post(BASE_PATH+"/save-customer").content(content).contentType(MediaType.APPLICATION_JSON)
+                post(BASE_PATH+"/save-customer/").content(content).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isConflict()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -124,7 +124,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
         String content = objectMapper.writeValueAsString(cusCustomerUpdateDto);
 
         MvcResult result = mockMvc.perform(
-                put(BASE_PATH +"update-customer").content(content).contentType(MediaType.APPLICATION_JSON)
+                put(BASE_PATH +"/update-customer/").content(content).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -145,7 +145,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
         String content = objectMapper.writeValueAsString(cusCustomerUpdateDto);
 
         MvcResult result = mockMvc.perform(
-                put(BASE_PATH +"update-customer").content(content).contentType(MediaType.APPLICATION_JSON)
+                put(BASE_PATH +"/update-customer/").content(content).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isConflict()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -165,7 +165,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
         String content = objectMapper.writeValueAsString(cusCustomerUpdateDto);
 
         MvcResult result = mockMvc.perform(
-                put(BASE_PATH + "/update-customer").content(content).contentType(MediaType.APPLICATION_JSON)
+                put(BASE_PATH + "/update-customer/").content(content).contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isConflict()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -177,7 +177,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
     void shouldDeleteCustomer() throws Exception {
 
         MvcResult result = mockMvc.perform(
-                delete(BASE_PATH +"/delete-customer"+"/7").content("7").contentType(MediaType.APPLICATION_JSON)
+                delete(BASE_PATH +"/delete-customer"+"/1").content("1").contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
         boolean isSuccess = isSuccess(result);
@@ -189,7 +189,7 @@ public class CusCustomerControllerIntegrationTest extends BaseTest {
     void shouldNoDeleteCustomer_WhenId_DoesNotExist() throws Exception {
 
         MvcResult result = mockMvc.perform(
-                delete(BASE_PATH +"delete-customer"+"/9999").content("9999").contentType(MediaType.APPLICATION_JSON)
+                delete(BASE_PATH +"/delete-customer"+"/9999").content("9999").contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound()).andReturn();
 
         boolean isSuccess = isSuccess(result);
