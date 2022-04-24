@@ -1,6 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.cus.service;
 
-import com.cbarkinozer.onlinebankingrestapi.app.cus.converter.CusCustomerMapper;
+import com.cbarkinozer.onlinebankingrestapi.app.cus.mapper.CusCustomerMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerSaveDto;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.dto.CusCustomerUpdateDto;

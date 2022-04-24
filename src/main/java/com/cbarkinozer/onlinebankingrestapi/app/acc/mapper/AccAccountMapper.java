@@ -1,4 +1,4 @@
-package com.cbarkinozer.onlinebankingrestapi.app.acc.converter;
+package com.cbarkinozer.onlinebankingrestapi.app.acc.mapper;
 
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;

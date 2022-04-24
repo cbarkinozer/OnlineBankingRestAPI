@@ -1,6 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.converter.AccAccountMapper;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.mapper.AccAccountMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountSaveDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -55,6 +54,8 @@ public class AccAccountService {
 
         Long currentCustomerId = accAccountEntityService.getCurrentCustomerId();
 
+        accAccountValidationService.controlIsCustomerExist(currentCustomerId);
+
         AccAccount accAccount = AccAccountMapper.INSTANCE.convertToAccAccount(accAccountSaveDto);
 
         accAccountValidationService.controlIsIbanNoUnique(accAccount);
@@ -62,6 +63,9 @@ public class AccAccountService {
         accAccount.setStatusType(GenStatusType.ACTIVE);
         accAccount.setIbanNo(ibanNo);
         accAccount.setCustomerId(currentCustomerId);
+
+        accAccountValidationService.controlAreFieldsNotNull(accAccount);
+        accAccountValidationService.controlIsBalanceNotNegative(accAccount);
 
         accAccount = accAccountEntityService.save(accAccount);
 

@@ -1,17 +1,14 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.converter.AccAccountMapper;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.mapper.AccAccountMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityRequestDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccountActivity;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccAccountActivityType;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountEntityService;
-import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
-import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.GenBusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,17 +27,17 @@ public class AccAccountActivityService {
 
     public AccAccountActivity moneyOut(AccMoneyActivityDto accMoneyActivityDto) {
 
-        controlIsMoneyActivityDtoNull(accMoneyActivityDto);
+        accAccountValidationService.controlIsMoneyActivityDtoNotNull(accMoneyActivityDto);
 
         Long accountId = accMoneyActivityDto.getAccountId();
         BigDecimal amount = accMoneyActivityDto.getAmount();
         AccAccountActivityType activityType = accMoneyActivityDto.getActivityType();
 
         AccAccount accAccount = accAccountEntityService.getByIdWithControl(accountId);
-
         BigDecimal newBalance = accAccount.getCurrentBalance().subtract(amount);
 
-        controlIsBalanceNotNegative(newBalance);
+        accAccountValidationService.controlIsAmountPositive(amount);
+        accAccountValidationService.controlIsBalanceNotNegative(newBalance);
 
         AccAccountActivity accAccountActivity = createAccAccountActivity(accountId, amount, newBalance, activityType);
 
@@ -51,7 +48,7 @@ public class AccAccountActivityService {
 
     public AccAccountActivity moneyIn(AccMoneyActivityDto accMoneyActivityDto) {
 
-        controlIsMoneyActivityDtoNull(accMoneyActivityDto);
+        accAccountValidationService.controlIsMoneyActivityDtoNotNull(accMoneyActivityDto);
 
         Long accountId = accMoneyActivityDto.getAccountId();
         BigDecimal amount = accMoneyActivityDto.getAmount();
@@ -60,11 +57,20 @@ public class AccAccountActivityService {
         AccAccount accAccount = accAccountEntityService.getByIdWithControl(accountId);
         BigDecimal newBalance = accAccount.getCurrentBalance().add(amount);
 
+        accAccountValidationService.controlIsAmountPositive(amount);
+        accAccountValidationService.controlIsBalanceNotNegative(newBalance);
+
         AccAccountActivity accAccountActivity = createAccAccountActivity(accountId, amount, newBalance, activityType);
 
         updateCurrentBalance(accAccount, newBalance);
 
         return accAccountActivity;
+    }
+
+    private void updateCurrentBalance(AccAccount accAccount, BigDecimal newBalance) {
+
+        accAccount.setCurrentBalance(newBalance);
+        accAccountEntityService.save(accAccount);
     }
 
     private AccAccountActivity createAccAccountActivity(Long accountId, BigDecimal amount, BigDecimal newBalance, AccAccountActivityType accAccountActivityType) {
@@ -83,38 +89,17 @@ public class AccAccountActivityService {
         return accAccountActivity;
     }
 
-    private void updateCurrentBalance(AccAccount accAccount, BigDecimal newBalance) {
-        accAccount.setCurrentBalance(newBalance);
-        accAccountEntityService.save(accAccount);
-    }
 
-    private void controlIsBalanceNotNegative(BigDecimal newBalance) {
-        if (newBalance.compareTo(BigDecimal.ZERO) < 0){
-            throw new GenBusinessException(AccErrorMessage.INSUFFICIENT_BALANCE);
-        }
-    }
-
-    private void controlIsMoneyActivityRequestDtoNull(AccMoneyActivityRequestDto accMoneyActivityRequestDto) {
-        if (accMoneyActivityRequestDto == null){
-            throw new GenBusinessException(GenErrorMessage.PARAMETER_CANNOT_BE_NULL);
-        }
-    }
-
-    private void controlIsMoneyActivityDtoNull(AccMoneyActivityDto accMoneyActivityDto) {
-
-        if (accMoneyActivityDto == null){
-            throw new GenBusinessException(GenErrorMessage.PARAMETER_CANNOT_BE_NULL);
-        }
-    }
 
     public AccAccountActivityDto withdraw(AccMoneyActivityRequestDto accMoneyActivityRequestDto) {
 
-        controlIsMoneyActivityRequestDtoNull(accMoneyActivityRequestDto);
+        accAccountValidationService.controlIsMoneyActivityRequestDtoNotNull(accMoneyActivityRequestDto);
 
         Long accAccountId = accMoneyActivityRequestDto.getAccountId();
         BigDecimal amount = accMoneyActivityRequestDto.getAmount();
 
         accAccountValidationService.controlIsAccountIdExist(accAccountId);
+        accAccountValidationService.controlIsAmountPositive(amount);
 
         AccMoneyActivityDto accMoneyActivityDto = AccMoneyActivityDto.builder()
                 .accountId(accAccountId)
@@ -131,12 +116,13 @@ public class AccAccountActivityService {
 
     public AccAccountActivityDto deposit(AccMoneyActivityRequestDto accMoneyActivityRequestDto) {
 
-        controlIsMoneyActivityRequestDtoNull(accMoneyActivityRequestDto);
+        accAccountValidationService.controlIsMoneyActivityRequestDtoNotNull(accMoneyActivityRequestDto);
 
         Long accAccountId = accMoneyActivityRequestDto.getAccountId();
         BigDecimal amount = accMoneyActivityRequestDto.getAmount();
 
         accAccountValidationService.controlIsAccountIdExist(accAccountId);
+        accAccountValidationService.controlIsAmountPositive(amount);
 
         AccMoneyActivityDto accMoneyActivityDto = AccMoneyActivityDto.builder()
                 .accountId(accAccountId)

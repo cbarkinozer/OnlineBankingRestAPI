@@ -1,6 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.converter.AccAccountMapper;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.mapper.AccAccountMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyTransferDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyTransferSaveDto;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Service
 @Transactional
@@ -26,6 +25,8 @@ public class AccMoneyTransferService {
 
     public AccMoneyTransferDto transferMoney(AccMoneyTransferSaveDto accMoneyTransferSaveDto) {
 
+        accAccountValidationService.controlIsMoneyTransferSaveDtoIsNull(accMoneyTransferSaveDto);
+
         AccMoneyTransfer accMoneyTransfer = AccAccountMapper.INSTANCE.convertToAccMoneyTransfer(accMoneyTransferSaveDto);
         LocalDate localDate = LocalDate.now();
         accMoneyTransfer.setTransferDate(localDate);
@@ -34,6 +35,7 @@ public class AccMoneyTransferService {
         Long accountIdTo = accMoneyTransfer.getAccountIdTo();
         BigDecimal amount = accMoneyTransfer.getAmount();
 
+        accAccountValidationService.controlIsAmountPositive(amount);
         accAccountValidationService.controlIsAccountIdExist(accountIdFrom);
         accAccountValidationService.controlIsAccountIdExist(accountIdTo);
 
