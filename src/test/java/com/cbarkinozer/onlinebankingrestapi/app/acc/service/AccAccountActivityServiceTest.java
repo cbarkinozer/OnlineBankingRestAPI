@@ -1,5 +1,9 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service;
 
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountActivityDto;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityDto;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityRequestDto;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccountActivity;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountEntityService;
 import org.junit.jupiter.api.Test;
@@ -8,7 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,18 +38,30 @@ class AccAccountActivityServiceTest {
     private AccAccountActivityService accAccountActivityService;
 
     @Test
-    void moneyOut() {
+    void shouldWithdraw() {
+
+        AccMoneyActivityRequestDto accMoneyActivityRequestDto = mock(AccMoneyActivityRequestDto.class);
+        AccAccountActivityDto accAccountActivityDto = mock(AccAccountActivityDto.class);
+
+        when(accAccountActivityDto.getCurrentBalance()).thenReturn(BigDecimal.valueOf(200));
+        when(accMoneyActivityRequestDto.getAmount()).thenReturn(BigDecimal.valueOf(100));
+
+        AccAccountActivityDto result = accAccountActivityService.withdraw(accMoneyActivityRequestDto);
+
+        assertEquals(BigDecimal.valueOf(100),result.getCurrentBalance());
     }
 
     @Test
-    void moneyIn() {
-    }
+    void shouldDeposit() {
 
-    @Test
-    void withdraw() {
-    }
+        AccMoneyActivityRequestDto accMoneyActivityRequestDto = mock(AccMoneyActivityRequestDto.class);
+        AccAccountActivityDto accAccountActivityDto = mock(AccAccountActivityDto.class);
 
-    @Test
-    void deposit() {
+        when(accAccountActivityDto.getCurrentBalance()).thenReturn(BigDecimal.valueOf(100));
+        when(accMoneyActivityRequestDto.getAmount()).thenReturn(BigDecimal.valueOf(100));
+
+        AccAccountActivityDto result = accAccountActivityService.deposit(accMoneyActivityRequestDto);
+
+        assertEquals(BigDecimal.valueOf(200),result.getCurrentBalance());
     }
 }

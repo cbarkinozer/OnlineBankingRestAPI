@@ -32,7 +32,7 @@ public class AccMoneyTransfer extends BaseEntity {
     @Column(name = "transferDate",nullable = false)
     private LocalDate transferDate;
 
-    @Column(name="DESCRIPTION",length=280,nullable = false)
+    @Column(name="DESCRIPTION",length=30,nullable = false)
     private String description;
 
     @Enumerated(EnumType.STRING)
