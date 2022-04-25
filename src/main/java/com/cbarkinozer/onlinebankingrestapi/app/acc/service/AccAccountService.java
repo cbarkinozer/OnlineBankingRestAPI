@@ -39,13 +39,13 @@ public class AccAccountService {
         return accAccountDto;
     }
 
-    public AccAccountDto findAccountByCustomerId(Long customerId) {
+    public List<AccAccountDto> findAccountByCustomerId(Long customerId) {
 
-        AccAccount accAccount = accAccountEntityService.findAccountByCustomerId(customerId);
+        List<AccAccount> accAccountList = accAccountEntityService.findAccountByCustomerId(customerId);
 
-        AccAccountDto accAccountDto = AccAccountMapper.INSTANCE.convertToAccAccountDto(accAccount);
+        List<AccAccountDto> accAccountDtoList = AccAccountMapper.INSTANCE.convertToAccAccountDtoList(accAccountList);
 
-        return accAccountDto;
+        return accAccountDtoList;
     }
 
     public AccAccountDto saveAccount(AccAccountSaveDto accAccountSaveDto) {

@@ -128,14 +128,14 @@ class AccAccountControllerTest {
     @Test
     void shouldFindAccountByCustomerId() {
 
-        AccAccountDto dummyAccAccountDto = createDummyAccAccountDto();
+        List<AccAccountDto> dummyAccAccountDtoList = createDummyAccAccountDtoList();
 
-        when(accAccountService.findAccountByCustomerId(1L)).thenReturn(dummyAccAccountDto);
+        when(accAccountService.findAccountByCustomerId(1L)).thenReturn(dummyAccAccountDtoList);
 
-        ResponseEntity<RestResponse<AccAccountDto>> result = accAccountController.findAccountByCustomerId(1L);
+        ResponseEntity<RestResponse<List<AccAccountDto>>> result = accAccountController.findAccountByCustomerId(1L);
 
         assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
-        assertEquals(result.getBody().getData(),dummyAccAccountDto);
+        assertEquals(result.getBody().getData(),dummyAccAccountDtoList);
         assertNull(result.getBody().getMessage());
         assertNotNull(result);
     }

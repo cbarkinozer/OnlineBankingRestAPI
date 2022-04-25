@@ -32,18 +32,15 @@ public class AccAccountEntityService extends BaseEntityService<AccAccount, AccAc
         return accAccountList;
     }
 
-    public AccAccount findAccountByCustomerId(Long customerId) {
+    public List<AccAccount> findAccountByCustomerId(Long customerId) {
 
-        Optional<AccAccount> accountOptional = getDao().findByCustomerId(customerId);
+        List<AccAccount> accAccountList = getDao().findAllByCustomerId(customerId);
 
-        AccAccount accAccount;
-        if (accountOptional.isPresent()){
-            accAccount = accountOptional.get();
-        } else {
+        if (accAccountList.isEmpty()){
             throw new ItemNotFoundException(AccErrorMessage.ACCOUNT_NOT_FOUND);
         }
 
-        return accAccount;
+        return accAccountList;
     }
 
     public Optional<AccAccount> findAccountByIbanNo(Long id, String ibanNo) {

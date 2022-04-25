@@ -57,11 +57,11 @@ public class AccAccountController {
             description = "Gets a account by customer id."
     )
     @GetMapping("/account/customerId/{customerId}")
-    public ResponseEntity<RestResponse<AccAccountDto>> findAccountByCustomerId(@PathVariable Long customerId){
+    public ResponseEntity<RestResponse<List<AccAccountDto>>> findAccountByCustomerId(@PathVariable Long customerId){
 
-        AccAccountDto accAccountDto = accAccountService.findAccountByCustomerId(customerId);
+        List<AccAccountDto> accAccountDtoList = accAccountService.findAccountByCustomerId(customerId);
 
-        return ResponseEntity.ok(RestResponse.of(accAccountDto));
+        return ResponseEntity.ok(RestResponse.of(accAccountDtoList));
     }
 
     @Operation(
