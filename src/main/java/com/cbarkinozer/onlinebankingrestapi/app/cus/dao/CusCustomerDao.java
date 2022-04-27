@@ -10,14 +10,5 @@ import java.util.Optional;
 
 public interface CusCustomerDao extends JpaRepository<CusCustomer,Long> {
 
-    @Query(
-            "SELECT " +
-                    "customer "+
-                    "FROM CusCustomer customer "+
-                    "WHERE customer.identityNo = :identityNo "+
-                    "AND customer.id <> :id "
-    )
-    Optional<CusCustomer> findByIdentityNo(@Param("id") Long id ,@Param("identityNo") Long identityNo);
-
     Optional<CusCustomer> findByIdentityNo(Long identityNo);
 }

@@ -4,6 +4,7 @@ import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.BaseErrorMessage;
 
 public enum CrdErrorMessage implements BaseErrorMessage {
     PARAMETER_MIN_CANNOT_BE_LARGER_THAN_MAX("Parameter min cannot be larger than max","Please be sure that parameter min is not larger than max"),
+    CUT_OFF_DAY_IS_NOT_VALID("Cut off day is not valid","Please be sure that the cut off day is between [1,31]."),
     ;
 
     private final String message;

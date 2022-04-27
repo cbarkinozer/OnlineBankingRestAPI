@@ -10,5 +10,5 @@ public class CrdCreditCardSaveDto {
 
     @NotNull
     private BigDecimal earning;
-    private String cutoffDay;
+    private Integer cutOffDay;
 }

@@ -33,19 +33,21 @@ public class CusCustomerEntityService extends BaseEntityService<CusCustomer, Cus
         return cusCustomer;
     }
 
-    public Optional<CusCustomer> findByIdentityNo(Long id,Long identityNo) {
-
-        Optional<CusCustomer> cusCustomerOptional = getDao().findByIdentityNo(id,identityNo);
-
-        return cusCustomerOptional;
-    }
-
     public CusCustomer findByIdentityNo(Long identityNo) {
 
         CusCustomer cusCustomer = getDao().findByIdentityNo(identityNo)
                 .orElseThrow(()-> new ItemNotFoundException(CusErrorMessage.CUSTOMER_NOT_FOUND));
 
        return cusCustomer;
+    }
+
+    public Optional<CusCustomer> findByIdentityNo(CusCustomer cusCustomer) {
+
+        Long identityNo = cusCustomer.getIdentityNo();
+
+        Optional<CusCustomer> cusCustomerOptional = getDao().findByIdentityNo(identityNo);
+
+        return cusCustomerOptional;
     }
 
     public CusCustomer findCustomerById(Long id){
@@ -55,4 +57,6 @@ public class CusCustomerEntityService extends BaseEntityService<CusCustomer, Cus
 
         return cusCustomer;
     }
+
+
 }

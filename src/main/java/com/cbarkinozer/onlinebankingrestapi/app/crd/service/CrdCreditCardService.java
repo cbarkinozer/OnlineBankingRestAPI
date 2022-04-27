@@ -1,9 +1,12 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.service;
 
+import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardSaveDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCard;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCardActivity;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.mapper.CrdCreditCardMapper;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenStatusType;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.util.StringUtil;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,6 +29,7 @@ public class CrdCreditCardService {
 
     private final CrdCreditCardEntityService crdCreditCardEntityService;
     private final CrdCreditCardValidationService crdCreditCardValidationService;
+    private final CrdCreditCardActivityEntityService crdCreditCardActivityEntityService;
 
     public List<CrdCreditCardDto> findAllCreditCards() {
 
@@ -47,10 +52,10 @@ public class CrdCreditCardService {
     public CrdCreditCardDto saveCreditCard(CrdCreditCardSaveDto crdCreditCardSaveDto) {
 
         BigDecimal earning = crdCreditCardSaveDto.getEarning();
-        String cutoffDayStr = crdCreditCardSaveDto.getCutoffDay();
+        Integer cutOffDay = crdCreditCardSaveDto.getCutOffDay();
 
         BigDecimal limit = earning.multiply(BigDecimal.valueOf(3));
-        LocalDate cutoffDate = getCutoffDate(cutoffDayStr);
+        LocalDate cutoffDate = getCutOffDate(cutOffDay);
 
         LocalDate dueDate = cutoffDate.plusDays(10);
 
@@ -61,23 +66,14 @@ public class CrdCreditCardService {
         return crdCreditCardDto;
     }
 
-    private LocalDate getCutoffDate(String cutoffDayStr) {
+    private LocalDate getCutOffDate(Integer cutOffDay) {
         int currentYear = LocalDate.now().getYear();
         int currentMonth = LocalDate.now().getMonthValue();
         Month nextMonth = Month.of(currentMonth).plus(1);
 
-        Integer cutoffDay = getCutoffDay(cutoffDayStr);
-        LocalDate cutoffDateLocal = LocalDate.of(currentYear, nextMonth, cutoffDay);
+        crdCreditCardValidationService.isCutOffDayValid(cutOffDay);
+        LocalDate cutoffDateLocal = LocalDate.of(currentYear, nextMonth, cutOffDay);
         return cutoffDateLocal;
-    }
-
-    private Integer getCutoffDay(String cutoffDayStr) {
-        if (!StringUtils.hasText(cutoffDayStr)){
-            cutoffDayStr = "1";
-        }
-
-        Integer cutoffDay = Integer.valueOf(cutoffDayStr);
-        return cutoffDay;
     }
 
     private CrdCreditCard createCreditCard(BigDecimal limit, LocalDate cutoffDate, LocalDate dueDate) {
@@ -111,5 +107,25 @@ public class CrdCreditCardService {
         crdCreditCard.setCancelDate(LocalDateTime.now());
 
         crdCreditCardEntityService.save(crdCreditCard);
+    }
+
+    public List<CrdCreditCardActivityDto> findCreditCardActivityBetweenDates(
+            Long creditCardId,
+            LocalDate startDate, LocalDate endDate,
+            Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime   = startDate.atStartOfDay();
+
+        List<CrdCreditCardActivity> crdCreditCardActivityList = crdCreditCardActivityEntityService
+                .findCreditCardActivityBetweenDates(
+                        creditCardId,
+                        startDateTime, endDateTime,
+                        pageOptional, sizeOptional
+                );
+
+        List<CrdCreditCardActivityDto> result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDtoList(crdCreditCardActivityList);
+
+        return result;
     }
 }

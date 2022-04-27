@@ -1,5 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.controller;
 
+import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityAnalysisDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardSaveDto;
@@ -8,11 +9,14 @@ import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardService
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,13 +57,54 @@ public class CrdCreditCardController {
             summary = "Get credit card by price interval",
             description = "Gets products in the range by given min and max."
     )
-    @GetMapping("/find-by-price-interval")
+    @GetMapping("/find-by-amount-interval")
     public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>>
     findCreditCardActivityByAmountInterval(@RequestParam BigDecimal min, @RequestParam BigDecimal max){
 
         List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList = crdCreditCardActivityService.findCreditCardActivityByAmountInterval(min,max);
 
         return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDtoList));
+    }
+
+
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Get a credit card's activities between dates",
+            description = "Gets a credit card's activities between dates pageable."
+    )
+    @GetMapping("/{id}/activities")
+    public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>> findCreditCardActivityBetweenDates(
+            @PathVariable Long creditCardId,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Optional<Integer> pageOptional,
+            Optional<Integer> sizeOptional
+    ){
+
+        List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList =
+                crdCreditCardService.findCreditCardActivityBetweenDates(
+                        creditCardId,
+                        startDate,
+                        endDate,
+                        pageOptional,
+                        sizeOptional
+                );
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDtoList));
+    }
+
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Get an analysis about credit card activities.",
+            description = "Gets an analysis about credit card activity's minimum, maximum, and average amounts, " +
+                    "count of credit card activities and credit card activity by credit card activity type."
+    )
+    @GetMapping("/get-credit-card-activity-analysis")
+    public ResponseEntity<RestResponse<List<CrdCreditCardActivityAnalysisDto>>> getCreditCardActivityAnalysis(){
+
+        List<CrdCreditCardActivityAnalysisDto> crdCreditCardActivityAnalysisDtoList = crdCreditCardActivityService.getCreditCardActivityAnalysis();
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityAnalysisDtoList));
     }
 
     @Operation(

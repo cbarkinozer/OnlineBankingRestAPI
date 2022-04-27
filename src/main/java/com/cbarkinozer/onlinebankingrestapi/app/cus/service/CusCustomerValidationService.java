@@ -45,17 +45,26 @@ public class CusCustomerValidationService {
 
     public void controlIsIdentityNoUnique(CusCustomer cusCustomer) {
 
-        Long id = cusCustomer.getId();
+        Optional<CusCustomer> cusCustomerOptional = cusCustomerEntityService.findByIdentityNo(cusCustomer);
 
-        Long identityNo = cusCustomer.getIdentityNo();
-
-        Optional<CusCustomer> cusCustomerOptional =
-                cusCustomerEntityService.findByIdentityNo(id,identityNo);
-
+        CusCustomer cusCustomerReturned;
         if(cusCustomerOptional.isPresent()){
-            throw new IllegalFieldException(CusErrorMessage.IDENTITY_NO_MUST_BE_UNIQUE);
+
+            cusCustomerReturned = cusCustomerOptional.get();
+
+            boolean didMatchedItself = didMatchedItself(cusCustomerReturned, cusCustomer);
+
+            if(!didMatchedItself){
+                throw new IllegalFieldException(CusErrorMessage.IDENTITY_NO_MUST_BE_UNIQUE);
+            }
+
         }
+
     }
 
+    private Boolean didMatchedItself(CusCustomer usrUserReturned, CusCustomer cusCustomer){
+
+        return usrUserReturned.getId().equals(cusCustomer.getId());
+    }
 
 }

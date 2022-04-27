@@ -52,7 +52,7 @@ public class CrdCreditCard extends BaseEntity {
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS_TYPE", length = 30)
+    @Column(name = "STATUS_TYPE", length = 30, nullable = false)
     private GenStatusType statusType;
 
     @Column(name = "CANCEL_DATE")

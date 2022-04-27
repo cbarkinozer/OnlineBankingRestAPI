@@ -24,16 +24,16 @@ public class CrdCreditCardActivity extends BaseEntity {
     @Column(name = "ID_CRD_CREDIT_CARD", nullable = false)
     private Long crdCreditCardId;
 
-    @Column(name = "AMOUNT", nullable = false, precision = 19, scale = 2)
+    @Column(name = "AMOUNT", precision = 19, scale = 2,nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "TRANSACTION_DATE")
+    @Column(name = "TRANSACTION_DATE", nullable = false)
     private LocalDateTime transactionDate;
 
-    @Column(name = "DESCRIPTION", nullable = false, length = 100)
+    @Column(name = "DESCRIPTION", length = 100, nullable = false)
     private String description;
 
-    @Column(name = "CARD_ACTIVITY_TYPE", length = 30)
+    @Column(name = "CARD_ACTIVITY_TYPE", length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private CrdCreditCardActivityType cardActivityType;
 }
