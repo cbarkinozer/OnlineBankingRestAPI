@@ -2,8 +2,6 @@ package com.cbarkinozer.onlinebankingrestapi.app.crd.service;
 
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityAnalysisDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCard;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCardActivity;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.mapper.CrdCreditCardMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardActivityEntityService;
@@ -36,9 +34,9 @@ public class CrdCreditCardActivityService {
         return convertToCrdCreditCardDtoList;
     }
 
-    public List<CrdCreditCardActivityAnalysisDto> getCreditCardActivityAnalysis() {
+    public List<CrdCreditCardActivityAnalysisDto> getCardActivityAnalysis(Long creditCardId) {
 
-        List<CrdCreditCardActivityAnalysisDto> crdCreditCardActivityAnalysisDtoList = crdCreditCardActivityEntityService.getCreditCardActivityAnalysis();
+        List<CrdCreditCardActivityAnalysisDto> crdCreditCardActivityAnalysisDtoList = crdCreditCardActivityEntityService.getCardActivityAnalysis(creditCardId);
 
         return crdCreditCardActivityAnalysisDtoList;
     }

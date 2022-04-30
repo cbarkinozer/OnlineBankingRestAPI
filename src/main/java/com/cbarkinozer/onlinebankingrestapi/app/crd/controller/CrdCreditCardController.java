@@ -1,9 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.controller;
 
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityAnalysisDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardActivityService;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
@@ -72,7 +69,7 @@ public class CrdCreditCardController {
             summary = "Get a credit card's activities between dates",
             description = "Gets a credit card's activities between dates pageable."
     )
-    @GetMapping("/{id}/activities")
+    @GetMapping("/{creditCardId}/activities")
     public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>> findCreditCardActivityBetweenDates(
             @PathVariable Long creditCardId,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -99,12 +96,25 @@ public class CrdCreditCardController {
             description = "Gets an analysis about credit card activity's minimum, maximum, and average amounts, " +
                     "count of credit card activities and credit card activity by credit card activity type."
     )
-    @GetMapping("/get-credit-card-activity-analysis")
-    public ResponseEntity<RestResponse<List<CrdCreditCardActivityAnalysisDto>>> getCreditCardActivityAnalysis(){
+    @GetMapping("/get-card-activity-analysis/{creditCardId}")
+    public ResponseEntity<RestResponse<List<CrdCreditCardActivityAnalysisDto>>> getCardActivityAnalysis(@PathVariable Long creditCardId){
 
-        List<CrdCreditCardActivityAnalysisDto> crdCreditCardActivityAnalysisDtoList = crdCreditCardActivityService.getCreditCardActivityAnalysis();
+        List<CrdCreditCardActivityAnalysisDto> crdCreditCardActivityAnalysisDtoList = crdCreditCardActivityService.getCardActivityAnalysis(creditCardId);
 
         return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityAnalysisDtoList));
+    }
+
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Save a credit card",
+            description = "Save a credit card."
+    )
+    @GetMapping("/{id}/cardDetails")
+    public ResponseEntity<RestResponse<CrdCreditCardDetailsDto>> getCardDetails(@PathVariable Long id){
+
+        CrdCreditCardDetailsDto crdCreditCardDetailsDto = crdCreditCardService.getCardDetails(id);
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardDetailsDto));
     }
 
     @Operation(
@@ -120,6 +130,44 @@ public class CrdCreditCardController {
         return ResponseEntity.ok(RestResponse.of(crdCreditCardDto));
     }
 
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Spend money from credit card.",
+            description = "Spend money from credit card."
+    )
+    @PostMapping("/spend-money")
+    public ResponseEntity<RestResponse<CrdCreditCardActivityDto>> spendMoney(@RequestBody CrdCreditCardSpendDto crdCreditCardSpendDto){
+
+        CrdCreditCardActivityDto crdCreditCardActivityDto = crdCreditCardService.spendMoney(crdCreditCardSpendDto);
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDto));
+    }
+
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Refund money from credit card.",
+            description = "Refund money from credit card."
+    )
+    @PostMapping("/refund/{activityId}")
+    public ResponseEntity<RestResponse<CrdCreditCardActivityDto>> refundMoney(@PathVariable Long activityId){
+
+        CrdCreditCardActivityDto crdCreditCardActivityDto = crdCreditCardService.refundMoney(activityId);
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDto));
+    }
+
+    @Operation(
+            tags = "Credit Card Controller",
+            summary = "Get payment money.",
+            description = "Get payment money (card limit increase)."
+    )
+    @PostMapping("/receive-payment")
+    public ResponseEntity<RestResponse<CrdCreditCardActivityDto>> receivePayment(@RequestBody CrdCreditCardPaymentDto crdCreditCardPaymentDto){
+
+        CrdCreditCardActivityDto crdCreditCardActivityDto = crdCreditCardService.receivePayment(crdCreditCardPaymentDto);
+
+        return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDto));
+    }
 
     @Operation(
             tags = "Credit Card Controller",

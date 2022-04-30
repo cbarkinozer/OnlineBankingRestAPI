@@ -21,5 +21,5 @@ public interface CrdCreditCardMapper {
 
     CrdCreditCardDto convertToCrdCreditCardDto(CrdCreditCard crdCreditCard);
 
-
+    CrdCreditCardActivityDto convertToCrdCreditCardActivityDto(CrdCreditCardActivity crdCreditCardActivity);
 }

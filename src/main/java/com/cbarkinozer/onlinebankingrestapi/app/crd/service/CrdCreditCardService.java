@@ -1,10 +1,9 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.service;
 
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardActivityDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDto;
-import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardSaveDto;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCard;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCardActivity;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.enums.CrdCreditCardActivityType;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.mapper.CrdCreditCardMapper;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardEntityService;
@@ -13,7 +12,6 @@ import com.cbarkinozer.onlinebankingrestapi.app.gen.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -49,6 +47,29 @@ public class CrdCreditCardService {
         return result;
     }
 
+
+
+    public CrdCreditCardDetailsDto getCardDetails(Long id) {
+
+        CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(id);
+        LocalDateTime termEndDate = crdCreditCard.getCutoffDate().atStartOfDay();
+        Long crdCreditCardId = crdCreditCard.getId();
+
+        LocalDateTime termStartDate = termEndDate.minusMonths(1);
+
+        CrdCreditCardDetailsDto crdCreditCardDetailsDto = crdCreditCardEntityService.getCreditCardDetails(crdCreditCardId);
+
+        List<CrdCreditCardActivity> crdCreditCardActivityList = crdCreditCardActivityEntityService
+                .findAllByCrdCreditCardIdAndTransactionDateBetween(crdCreditCardId, termStartDate, termEndDate);
+
+        List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList = CrdCreditCardMapper.INSTANCE
+                .convertToCrdCreditCardActivityDtoList(crdCreditCardActivityList);
+
+        crdCreditCardDetailsDto.setCrdCreditCardActivityDtoList(crdCreditCardActivityDtoList);
+
+        return crdCreditCardDetailsDto;
+    }
+
     public CrdCreditCardDto saveCreditCard(CrdCreditCardSaveDto crdCreditCardSaveDto) {
 
         BigDecimal earning = crdCreditCardSaveDto.getEarning();
@@ -67,6 +88,7 @@ public class CrdCreditCardService {
     }
 
     private LocalDate getCutOffDate(Integer cutOffDay) {
+
         int currentYear = LocalDate.now().getYear();
         int currentMonth = LocalDate.now().getMonthValue();
         Month nextMonth = Month.of(currentMonth).plus(1);
@@ -115,7 +137,7 @@ public class CrdCreditCardService {
             Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateTime   = startDate.atStartOfDay();
+        LocalDateTime endDateTime   = endDate.atStartOfDay();
 
         List<CrdCreditCardActivity> crdCreditCardActivityList = crdCreditCardActivityEntityService
                 .findCreditCardActivityBetweenDates(
@@ -128,4 +150,140 @@ public class CrdCreditCardService {
 
         return result;
     }
+
+    public CrdCreditCardActivityDto spendMoney(CrdCreditCardSpendDto crdCreditCardSpendDto) {
+
+        BigDecimal amount = crdCreditCardSpendDto.getAmount();
+        String description = crdCreditCardSpendDto.getDescription();
+
+        CrdCreditCard crdCreditCard = getCreditCard(crdCreditCardSpendDto);
+
+        crdCreditCardValidationService.validateCreditCard(crdCreditCard);
+
+        BigDecimal currentDebt = crdCreditCard.getCurrentDebt().add(amount);
+        BigDecimal currentAvailableLimit = crdCreditCard.getAvailableCardLimit().subtract(amount);
+
+        crdCreditCardValidationService.validateCardLimit(currentAvailableLimit);
+
+        crdCreditCard = updateCreditCardForSpend(crdCreditCard, currentDebt, currentAvailableLimit);
+
+        CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForSpend(amount, description, crdCreditCard);
+
+        CrdCreditCardActivityDto result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
+
+        return result;
+    }
+
+    private CrdCreditCard getCreditCard(CrdCreditCardSpendDto crdCreditCardSpendDto) {
+
+        Long cardNo = crdCreditCardSpendDto.getCardNo();
+        Long cvvNo = crdCreditCardSpendDto.getCvvNo();
+
+        LocalDate expireDate = crdCreditCardSpendDto.getExpireDate();
+
+        CrdCreditCard crdCreditCard = crdCreditCardEntityService.findByCardNoAndCvvNoAndExpireDate(cardNo, cvvNo, expireDate);
+
+        return crdCreditCard;
+    }
+
+    private CrdCreditCard updateCreditCardForSpend(CrdCreditCard crdCreditCard, BigDecimal currentDebt, BigDecimal currentAvailableLimit) {
+
+        crdCreditCard.setCurrentDebt(currentDebt);
+        crdCreditCard.setAvailableCardLimit(currentAvailableLimit);
+
+        crdCreditCard = crdCreditCardEntityService.save(crdCreditCard);
+
+        return crdCreditCard;
+    }
+
+    private CrdCreditCardActivity createCreditCardActivityForSpend(BigDecimal amount, String description, CrdCreditCard crdCreditCard) {
+
+        CrdCreditCardActivity crdCreditCardActivity = new CrdCreditCardActivity();
+        crdCreditCardActivity.setCrdCreditCardId(crdCreditCard.getId());
+        crdCreditCardActivity.setAmount(amount);
+        crdCreditCardActivity.setDescription(description);
+        crdCreditCardActivity.setCardActivityType(CrdCreditCardActivityType.SPEND);
+        crdCreditCardActivity.setTransactionDate(LocalDateTime.now());
+
+        crdCreditCardActivity = crdCreditCardActivityEntityService.save(crdCreditCardActivity);
+        return crdCreditCardActivity;
+    }
+
+    public CrdCreditCardActivityDto refundMoney(Long activityId) {
+
+        CrdCreditCardActivity oldCrdCreditCardActivity = crdCreditCardActivityEntityService.getByIdWithControl(activityId);
+        BigDecimal amount = oldCrdCreditCardActivity.getAmount();
+
+        CrdCreditCard crdCreditCard = updateCreditCardForRefund(oldCrdCreditCardActivity, amount);
+
+        CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForRefund(oldCrdCreditCardActivity, amount, crdCreditCard);
+
+        CrdCreditCardActivityDto result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
+
+        return result;
+    }
+
+    private CrdCreditCardActivity createCreditCardActivityForRefund(CrdCreditCardActivity oldCrdCreditCardActivity, BigDecimal amount, CrdCreditCard crdCreditCard) {
+
+        String description = "REFUND : " + oldCrdCreditCardActivity.getDescription();
+
+        CrdCreditCardActivity crdCreditCardActivity = new CrdCreditCardActivity();
+        crdCreditCardActivity.setCrdCreditCardId(crdCreditCard.getId());
+        crdCreditCardActivity.setAmount(amount);
+        crdCreditCardActivity.setDescription(description);
+        crdCreditCardActivity.setCardActivityType(CrdCreditCardActivityType.REFUND);
+        crdCreditCardActivity.setTransactionDate(LocalDateTime.now());
+
+        crdCreditCardActivity = crdCreditCardActivityEntityService.save(crdCreditCardActivity);
+        return crdCreditCardActivity;
+    }
+
+    private CrdCreditCard updateCreditCardForRefund(CrdCreditCardActivity oldCrdCreditCardActivity, BigDecimal amount) {
+
+        CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(oldCrdCreditCardActivity.getCrdCreditCardId());
+
+        crdCreditCard = addLimitToCard(crdCreditCard, amount);
+        return crdCreditCard;
+    }
+
+    private CrdCreditCard addLimitToCard(CrdCreditCard crdCreditCard, BigDecimal amount) {
+
+        BigDecimal currentDebt = crdCreditCard.getCurrentDebt().subtract(amount);
+        BigDecimal currentAvailableLimit = crdCreditCard.getAvailableCardLimit().add(amount);
+
+        crdCreditCard.setCurrentDebt(currentDebt);
+        crdCreditCard.setAvailableCardLimit(currentAvailableLimit);
+        crdCreditCard = crdCreditCardEntityService.save(crdCreditCard);
+        return crdCreditCard;
+    }
+
+    public CrdCreditCardActivityDto receivePayment(CrdCreditCardPaymentDto crdCreditCardPaymentDto) {
+
+        Long creditCardId = crdCreditCardPaymentDto.getCrdCreditCardId();
+        BigDecimal amount = crdCreditCardPaymentDto.getAmount();
+
+        CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(creditCardId);
+
+        addLimitToCard(crdCreditCard, amount);
+
+        CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForPayment(creditCardId, amount);
+
+        CrdCreditCardActivityDto result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
+
+        return result;
+    }
+
+    private CrdCreditCardActivity createCreditCardActivityForPayment(Long crdCreditCardId, BigDecimal amount) {
+
+        CrdCreditCardActivity crdCreditCardActivity = new CrdCreditCardActivity();
+        crdCreditCardActivity.setCrdCreditCardId(crdCreditCardId);
+        crdCreditCardActivity.setAmount(amount);
+        crdCreditCardActivity.setDescription("PAYMENT : ");
+        crdCreditCardActivity.setCardActivityType(CrdCreditCardActivityType.PAYMENT);
+        crdCreditCardActivity.setTransactionDate(LocalDateTime.now());
+
+        crdCreditCardActivity = crdCreditCardActivityEntityService.save(crdCreditCardActivity);
+        return crdCreditCardActivity;
+    }
+
 }

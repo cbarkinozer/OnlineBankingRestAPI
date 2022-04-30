@@ -1,14 +1,14 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice;
 
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dao.CrdCreditCardDao;
+import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardDetailsDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCard;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenStatusType;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.service.BaseEntityService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,4 +27,11 @@ public class CrdCreditCardEntityService extends BaseEntityService<CrdCreditCard,
         return getDao().findAllByStatusType(GenStatusType.ACTIVE);
     }
 
+    public CrdCreditCard findByCardNoAndCvvNoAndExpireDate(Long cardNo, Long cvvNo, LocalDate expireDate){
+        return getDao().findByCardNoAndCvvNoAndExpireDateAndStatusType(cardNo, cvvNo, expireDate, GenStatusType.ACTIVE);
+    }
+
+    public CrdCreditCardDetailsDto getCreditCardDetails(Long creditCardId) {
+        return getDao().getCreditCardDetails(creditCardId);
+    }
 }
