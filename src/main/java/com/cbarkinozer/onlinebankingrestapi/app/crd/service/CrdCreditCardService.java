@@ -72,8 +72,13 @@ public class CrdCreditCardService {
 
     public CrdCreditCardDto saveCreditCard(CrdCreditCardSaveDto crdCreditCardSaveDto) {
 
+
+
         BigDecimal earning = crdCreditCardSaveDto.getEarning();
         Integer cutOffDay = crdCreditCardSaveDto.getCutOffDay();
+
+        crdCreditCardValidationService.controlAreFieldsNull(earning,cutOffDay);
+        crdCreditCardValidationService.controlIsEarningNotNegative(earning);
 
         BigDecimal limit = earning.multiply(BigDecimal.valueOf(3));
         LocalDate cutoffDate = getCutOffDate(cutOffDay);
@@ -152,6 +157,8 @@ public class CrdCreditCardService {
     }
 
     public CrdCreditCardActivityDto spendMoney(CrdCreditCardSpendDto crdCreditCardSpendDto) {
+
+        crdCreditCardValidationService.controlAreFieldsNull(crdCreditCardSpendDto);
 
         BigDecimal amount = crdCreditCardSpendDto.getAmount();
         String description = crdCreditCardSpendDto.getDescription();
@@ -259,8 +266,12 @@ public class CrdCreditCardService {
 
     public CrdCreditCardActivityDto receivePayment(CrdCreditCardPaymentDto crdCreditCardPaymentDto) {
 
+
+
         Long creditCardId = crdCreditCardPaymentDto.getCrdCreditCardId();
         BigDecimal amount = crdCreditCardPaymentDto.getAmount();
+
+        crdCreditCardValidationService.controlAreFieldsNull(creditCardId,amount);
 
         CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(creditCardId);
 

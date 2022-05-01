@@ -1,5 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.controller;
 
+import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardActivityService;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardService;
@@ -7,7 +8,10 @@ import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -123,11 +127,26 @@ public class CrdCreditCardController {
             description = "Save a credit card."
     )
     @PostMapping
-    public ResponseEntity<RestResponse<CrdCreditCardDto>> saveCreditCard(@RequestBody CrdCreditCardSaveDto crdCreditCardSaveDto){
+    public ResponseEntity<RestResponse<MappingJacksonValue>> saveCreditCard(@RequestBody CrdCreditCardSaveDto crdCreditCardSaveDto){
 
         CrdCreditCardDto crdCreditCardDto = crdCreditCardService.saveCreditCard(crdCreditCardSaveDto);
 
-        return ResponseEntity.ok(RestResponse.of(crdCreditCardDto));
+        WebMvcLinkBuilder linkGet = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(
+                        this.getClass()).findCreditCardById(crdCreditCardDto.getId()));
+
+        WebMvcLinkBuilder linkDelete = WebMvcLinkBuilder.linkTo(
+                WebMvcLinkBuilder.methodOn(
+                        this.getClass()).cancelCreditCard(crdCreditCardDto.getId()));
+
+        EntityModel<CrdCreditCardDto> entityModel = EntityModel.of(crdCreditCardDto);
+
+        entityModel.add(linkGet.withRel("find-by-id"));
+        entityModel.add(linkDelete.withRel("cancel"));
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(entityModel);
+
+        return ResponseEntity.ok(RestResponse.of(mappingJacksonValue));
     }
 
     @Operation(
