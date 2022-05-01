@@ -1,11 +1,13 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service;
 
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountActivityDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccMoneyActivityRequestDto;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccountActivity;
+import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountActivityEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice.AccAccountEntityService;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.GenBusinessException;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,11 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,6 +49,55 @@ class AccAccountActivityServiceTest {
     }
 
     @Test
+    void shouldNotWithdraw_WhenMoneyActivityRequestDto_IsNull(){
+
+        GenBusinessException genBusinessException = new GenBusinessException(GenErrorMessage.PARAMETER_CANNOT_BE_NULL);
+
+        doThrow(GenBusinessException.class).when(accAccountValidationService).controlIsMoneyActivityRequestDtoNotNull(null);
+
+        GenBusinessException result = assertThrows(GenBusinessException.class,
+                () -> accAccountActivityService.withdraw(null));
+
+        assertEquals(genBusinessException, result);
+        assertEquals(genBusinessException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(genBusinessException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldNotWithdraw_WhenAccountId_DoesNotExist(){
+
+        IllegalFieldException illegalFieldException = new IllegalFieldException(AccErrorMessage.ACCOUNT_NOT_FOUND);
+
+        doThrow(IllegalFieldException.class).when(accAccountValidationService).controlIsAccountIdExist(0L);
+
+        IllegalFieldException result = assertThrows(IllegalFieldException.class,
+                () -> accAccountActivityService.withdraw(null));
+
+        assertEquals(illegalFieldException, result);
+        assertEquals(illegalFieldException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(illegalFieldException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldNotWithdraw_WhenAmount_IsPositive(){
+
+        IllegalFieldException illegalFieldException = new IllegalFieldException(AccErrorMessage.ACCOUNT_NOT_FOUND);
+
+        doThrow(IllegalFieldException.class).when(accAccountValidationService).controlIsAmountPositive(BigDecimal.valueOf(-1));
+
+        IllegalFieldException result = assertThrows(IllegalFieldException.class,
+                () -> accAccountActivityService.withdraw(null));
+
+        assertEquals(illegalFieldException, result);
+        assertEquals(illegalFieldException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(illegalFieldException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+
+    }
+
+    @Test
     void shouldDeposit() {
 
         AccMoneyActivityRequestDto accMoneyActivityRequestDto = mock(AccMoneyActivityRequestDto.class);
@@ -63,5 +109,63 @@ class AccAccountActivityServiceTest {
         AccAccountActivityDto result = accAccountActivityService.deposit(accMoneyActivityRequestDto);
 
         assertEquals(BigDecimal.valueOf(200),result.getCurrentBalance());
+    }
+
+    @Test
+    void shouldNotDeposit_WhenMoneyActivityRequestDto_IsNull(){
+
+        GenBusinessException genBusinessException = new GenBusinessException(GenErrorMessage.PARAMETER_CANNOT_BE_NULL);
+
+        doThrow(GenBusinessException.class).when(accAccountValidationService).controlIsMoneyActivityRequestDtoNotNull(null);
+
+        GenBusinessException result = assertThrows(GenBusinessException.class,
+                () -> accAccountActivityService.deposit(null));
+
+        assertEquals(genBusinessException, result);
+        assertEquals(genBusinessException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(genBusinessException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldNotDeposit_WhenAccountId_DoesNotExist(){
+
+        AccMoneyActivityRequestDto accMoneyActivityRequestDto = mock(AccMoneyActivityRequestDto.class);
+
+        IllegalFieldException illegalFieldException = new IllegalFieldException(AccErrorMessage.ACCOUNT_NOT_FOUND);
+
+        when(accMoneyActivityRequestDto.getAccountId()).thenReturn(0L);
+
+        doThrow(IllegalFieldException.class).when(accAccountValidationService).controlIsAccountIdExist(0L);
+
+        IllegalFieldException result = assertThrows(IllegalFieldException.class,
+                () -> accAccountActivityService.deposit(accMoneyActivityRequestDto));
+
+        assertEquals(illegalFieldException, result);
+        assertEquals(illegalFieldException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(illegalFieldException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+    }
+
+    @Test
+    void shouldNotDeposit_WhenAmount_IsNotPositive(){
+
+
+        AccMoneyActivityRequestDto accMoneyActivityRequestDto = mock(AccMoneyActivityRequestDto.class);
+
+        IllegalFieldException illegalFieldException = new IllegalFieldException(AccErrorMessage.ACCOUNT_NOT_FOUND);
+
+        when(accMoneyActivityRequestDto.getAmount()).thenReturn(BigDecimal.valueOf(-1));
+
+        doThrow(IllegalFieldException.class).when(accAccountValidationService).controlIsAmountPositive(BigDecimal.valueOf(-1));
+
+        IllegalFieldException result = assertThrows(IllegalFieldException.class,
+                () -> accAccountActivityService.deposit(accMoneyActivityRequestDto));
+
+        assertEquals(illegalFieldException, result);
+        assertEquals(illegalFieldException.getBaseErrorMessage().getMessage(), result.getBaseErrorMessage().getMessage());
+        assertEquals(illegalFieldException.getBaseErrorMessage().getDetailMessage(), result.getBaseErrorMessage().getDetailMessage());
+        assertNotNull(result);
+
     }
 }

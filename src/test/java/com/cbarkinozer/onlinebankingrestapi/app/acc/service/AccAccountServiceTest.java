@@ -181,7 +181,7 @@ class AccAccountServiceTest {
     }
 
     @Test
-    void dontCancelAccount_WhenId_DoesNotExist(){
+    void shouldNotCancelAccount_WhenId_DoesNotExist(){
 
         when(accAccountEntityService.getByIdWithControl(anyLong())).thenThrow(ItemNotFoundException.class);
 

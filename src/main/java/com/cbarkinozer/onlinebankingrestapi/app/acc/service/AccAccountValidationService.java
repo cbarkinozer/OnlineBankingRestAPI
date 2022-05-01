@@ -116,7 +116,7 @@ public class AccAccountValidationService {
 
         if (amount.compareTo(BigDecimal.ZERO) < 1){
 
-            throw new GenBusinessException(AccErrorMessage.AMOUNT_MUST_BE_POSITIVE);
+            throw new IllegalFieldException(AccErrorMessage.AMOUNT_MUST_BE_POSITIVE);
         }
     }
 }
