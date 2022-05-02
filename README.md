@@ -12,12 +12,16 @@ Kafka(message broker), log4j(logging).
 ### Architecture   
 https://ibb.co/NmHVL3b    
 
-### Design of the packages, entities, and controllers  
+### Design of the packages, entities, and controllers    
 https://ibb.co/2t5Cq3q  
-https://ibb.co/LzWWCpz  
+https://ibb.co/LzWWCpz   
 
-### Design Notes
+### Design Notes  
 I do not check identity No (citizen id) by algorithm because I want this API to be international.   
 There is no update for AccAccount because Accounts do not get updated.   
-AccAccount has the method cancel instead of the method delete because Accounts should never be deleted.  
+AccAccount has the method cancel instead of the method delete because Accounts should never be deleted.    
 FindAll methods get active items, but findById methods get both active and passive items.  
+The bank's interest rate and allocation fee are given as constant,
+it can be implemented dynamicaly by pulling data from another API.    
+Interest rate can be zero because some countries (there are 11 countries with sharia laws) prefer it that way.  
+For accounts, iban no is generated as random numbers(simulated), although stored as string. This generation rules can be changed easily.  

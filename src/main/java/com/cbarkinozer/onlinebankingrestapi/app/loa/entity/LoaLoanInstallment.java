@@ -1,4 +1,4 @@
-package com.cbarkinozer.onlinebankingrestapi.app.cdt.entity;
+package com.cbarkinozer.onlinebankingrestapi.app.loa.entity;
 
 import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
 import lombok.Getter;
@@ -11,16 +11,16 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
-@Table(name="CDT_CREDIT_INSTALLMENT")
-public class CdtCreditInstallment extends BaseEntity {
+@Table(name="LOA_LOAN_INSTALLMENT")
+public class LoaLoanInstallment extends BaseEntity {
 
     @Id
-    @SequenceGenerator(name="CdtCreditInstallment",sequenceName = "CDT_CREDIT_INSTALLMENT_ID_SEQ")
-    @GeneratedValue(generator = "CdtCreditInstallment")
+    @SequenceGenerator(name="LoaLoanInstallment",sequenceName = "LOA_LOAN_INSTALLMENT_ID_SEQ")
+    @GeneratedValue(generator = "LoaLoanInstallment")
     private Long id;
 
-    @Column(name="ID_CDT_CREDIT", nullable = false)
-    private Long creditId;
+    @Column(name="ID_LOA_LOAN", nullable = false)
+    private Long loanId;
 
     @Column(name="ORDER_NO",nullable = false)
     private Long orderNo;
