@@ -20,7 +20,7 @@ public class AccAccountActivity extends BaseEntity {
     @GeneratedValue(generator = "AccAccountActivity")
     private Long id;
 
-    @Column(name="ID_ACC_ACCOUNT",length = 100,nullable = false)
+    @Column(name="ID_ACC_ACCOUNT",nullable = false)
     private Long accountId;
 
     @Column(name="AMOUNT",precision=19,scale=2,nullable = false)

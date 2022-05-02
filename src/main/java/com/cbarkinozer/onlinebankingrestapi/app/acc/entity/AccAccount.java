@@ -22,7 +22,7 @@ public class AccAccount extends BaseEntity {
     @GeneratedValue(generator = "AccAccount")
     private Long id;
 
-    @Column(name="ID_CUS_CUSTOMER",length = 100,nullable = false)
+    @Column(name="ID_CUS_CUSTOMER",nullable = false)
     private Long customerId;
 
     @Column(name="IBAN_NO",length = 40,unique = true,nullable = false)

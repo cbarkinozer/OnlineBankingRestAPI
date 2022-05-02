@@ -20,10 +20,10 @@ public class AccMoneyTransfer extends BaseEntity {
     @GeneratedValue(generator = "AccMoneyTransfer")
     private Long id;
 
-    @Column(name="ID_ACC_ACCOUNT_FROM",length = 100,nullable = false)
+    @Column(name="ID_ACC_ACCOUNT_FROM",nullable = false)
     private Long accountIdFrom;
 
-    @Column(name="ID_ACC_ACCOUNT_TO",length = 100,nullable = false)
+    @Column(name="ID_ACC_ACCOUNT_TO",nullable = false)
     private Long accountIdTo;
 
     @Column(name ="AMOUNT" ,precision = 19,scale = 2,nullable = false)
