@@ -1,6 +1,8 @@
 package com.cbarkinozer.onlinebankingrestapi.app.loa.service;
 
+import com.cbarkinozer.onlinebankingrestapi.app.cus.service.entityservice.CusCustomerEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaApplyLoanDto;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLateFeeDto;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLoanDto;
@@ -15,6 +17,8 @@ import java.math.BigDecimal;
 @Transactional
 @RequiredArgsConstructor
 public class LoaLoanValidationService {
+
+    private final CusCustomerEntityService cusCustomerEntityService;
 
     public void controlIsParameterNotNull(LoaCalculateLoanDto loaCalculateLoanDto) {
 
@@ -89,7 +93,6 @@ public class LoaLoanValidationService {
         if(lateInterestTax.compareTo(BigDecimal.ZERO)>=0){
             throw new IllegalFieldException(LoaErrorMessage.LATE_INTEREST_TAX_CANNOT_BE_NEGATIVE);
         }
-
     }
 
     public void controlIsLoanAmountNotGreaterThanMaxLoanAmount(BigDecimal principalLoanAmount, BigDecimal maxLoanAmount) {
@@ -101,6 +104,36 @@ public class LoaLoanValidationService {
 
             throw new IllegalFieldException(loaErrorMessage);
         }
+    }
 
+    public void controlIsCustomerExist(Long customerId) {
+
+        boolean isExist = cusCustomerEntityService.existsById(customerId);
+
+        if (!isExist){
+
+            throw new ItemNotFoundException(LoaErrorMessage.CUSTOMER_NOT_FOUND);
+        }
+    }
+
+    public void controlIsMonthlyInstallmentAmountPositive(BigDecimal monthlyInstallmentAmount) {
+
+        if(monthlyInstallmentAmount.compareTo(BigDecimal.ZERO)>0){
+            throw new IllegalFieldException(LoaErrorMessage.MONTHLY_INSTALLMENT_AMOUNT_MUST_BE_POSITIVE);
+        }
+    }
+
+    public void controlIsInterestAmountNotNegative(BigDecimal interestAmount) {
+
+        if(interestAmount.compareTo(BigDecimal.ZERO)>=0){
+            throw new IllegalFieldException(LoaErrorMessage.INTEREST_AMOUNT_CANNOT_BE_NEGATIVE);
+        }
+    }
+
+    public void controlIsPrincipalLoanAmountPositive(BigDecimal principalLoanAmount) {
+
+        if(principalLoanAmount.compareTo(BigDecimal.ZERO)>0){
+            throw new IllegalFieldException(LoaErrorMessage.PRINCIPAL_lOAN_AMOUNT_MUST_BE_POSITIVE);
+        }
     }
 }

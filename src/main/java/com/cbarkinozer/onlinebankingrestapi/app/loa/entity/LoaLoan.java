@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -29,5 +30,17 @@ public class LoaLoan extends BaseEntity {
 
     @Column(name="MONTHLY_INSTALLMENT_AMOUNT", precision = 19 ,scale =2 ,nullable = false)
     private BigDecimal monthlyInstallmentAmount;
+
+    @Column(name="INTEREST_TO_BE_PAID", precision = 19 ,scale =2 ,nullable = false)
+    private BigDecimal interestToBePaid;
+
+    @Column(name="PRINCIPAL_TO_BE_PAID", precision = 19 ,scale =2 ,nullable = false)
+    private BigDecimal principalToBePaid;
+
+    @Column(name="REMAINING_PRINCIPAL", precision = 19 ,scale =2 ,nullable = false)
+    private BigDecimal remainingPrincipal;
+
+    @Column(name="DUE_DATE",nullable = false)
+    private LocalDate dueDate;
 
 }

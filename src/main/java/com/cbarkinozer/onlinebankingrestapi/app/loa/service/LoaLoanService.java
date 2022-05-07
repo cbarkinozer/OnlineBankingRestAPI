@@ -83,6 +83,15 @@ public class LoaLoanService {
         return loaCalculateLateFeeResponseDto;
     }
 
+    public LoaLoanDto findLoanById(Long id) {
+
+        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
+
+        LoaLoanDto loaLoanDto = LoaLoanMapper.INSTANCE.convertToLoaLoanDto(loaLoan);
+
+        return loaLoanDto;
+    }
+
     public LoaLoanDto applyLoan(LoaApplyLoanDto loaLoanApplyLoanDto) {
 
         loaLoanValidationService.controlIsParameterNotNull(loaLoanApplyLoanDto);
@@ -99,6 +108,8 @@ public class LoaLoanService {
         BigDecimal monthlyInstallmentAmount = INTEREST_RATE.multiply(subCalculation)
                 .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.UP);
 
+        BigDecimal interestAmount = principalLoanAmount.multiply(INTEREST_RATE);
+
         BigDecimal maxInstallmentAmount = monthlySalary.multiply(BigDecimal.valueOf(0.5));
         BigDecimal maxLoanAmount = maxInstallmentAmount
                 .multiply(BigDecimal.valueOf(installmentCount))
@@ -106,15 +117,28 @@ public class LoaLoanService {
 
         LocalDate dueDate = LocalDate.now().plusMonths(installmentCount);
 
+
+        loaLoanValidationService.controlIsCustomerExist(customerId);
+        loaLoanValidationService.controlIsMonthlyInstallmentAmountPositive(monthlyInstallmentAmount);
+        loaLoanValidationService.controlIsInterestAmountNotNegative(interestAmount);
+        loaLoanValidationService.controlIsPrincipalLoanAmountPositive(principalLoanAmount);
         loaLoanValidationService.controlIsLoanAmountNotGreaterThanMaxLoanAmount(
                 principalLoanAmount, maxLoanAmount);
+
+
+        loaLoan.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
+        loaLoan.setInterestToBePaid(interestAmount);
+        loaLoan.setPrincipalToBePaid(principalLoanAmount);
+        loaLoan.setRemainingPrincipal(principalLoanAmount);
+        loaLoan.setDueDate(dueDate);
 
 
         loaLoan = loaLoanEntityService.save(loaLoan);
 
         LoaLoanDto loaLoanDto = LoaLoanMapper.INSTANCE.convertToLoaLoanDto(loaLoan);
-        loaLoanDto.setDueDate(dueDate);
 
         return loaLoanDto;
     }
+
+
 }

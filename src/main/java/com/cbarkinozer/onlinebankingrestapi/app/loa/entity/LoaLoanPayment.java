@@ -22,12 +22,9 @@ public class LoaLoanPayment extends BaseEntity {
     @Column(name="ID_LOA_LOAN",nullable = false)
     private Long loanId;
 
-    @Column(name="ID_LOA_LOAN_INSTALLMENT",nullable = true)
-    private Long installmentId;
+    @Column(name="PAYMENT_AMOUNT", precision = 19 ,scale =2 ,nullable = false)
+    private BigDecimal paymentAmount;
 
-    @Column(name="AMOUNT", precision = 19 ,scale =2 ,nullable = false)
-    private BigDecimal amount;
-
-    @Column(name="DATE",nullable = false)
-    private LocalDate date;
+    @Column(name="PAYMENT_DATE",nullable = false)
+    private LocalDate PaymentDate;
 }

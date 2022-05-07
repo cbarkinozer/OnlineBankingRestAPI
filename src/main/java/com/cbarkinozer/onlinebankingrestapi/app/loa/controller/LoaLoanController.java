@@ -44,6 +44,19 @@ public class LoaLoanController {
 
     @Operation(
             tags = "Loan Controller",
+            summary = "Get a Loan",
+            description = "Gets a loan by id."
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<RestResponse<LoaLoanDto>> findLoanById(@PathVariable Long id){
+
+        LoaLoanDto loaLoanDto = loaLoanService.findLoanById(id);
+
+        return ResponseEntity.ok(RestResponse.of(loaLoanDto));
+    }
+
+    @Operation(
+            tags = "Loan Controller",
             summary = "Apply loan.",
             description = "Apply for a loan."
     )
@@ -54,6 +67,21 @@ public class LoaLoanController {
 
         return ResponseEntity.ok(RestResponse.of(loaLoanDto));
     }
+
+    @Operation(
+            tags = "Loan Controller",
+            summary = "Pay installment.",
+            description = "Pay installment."
+    )
+    @PostMapping("/pay-installment")
+    public ResponseEntity<RestResponse<LoaPayInstallmentResponseDto>> payInstallment(@RequestBody LoaPayInstallmentDto loaPayInstallmentDto){
+
+        LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = loaLoanService.payInstallment(loaPayInstallmentDto);
+
+        return ResponseEntity.ok(RestResponse.of(loaPayInstallmentResponseDto));
+    }
+
+
 
 
 }

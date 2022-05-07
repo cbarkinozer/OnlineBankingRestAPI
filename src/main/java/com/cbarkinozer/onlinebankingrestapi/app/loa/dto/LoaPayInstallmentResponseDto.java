@@ -6,16 +6,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class LoaLoanDto {
+public class LoaPayInstallmentResponseDto {
 
-    private Long id;
-    private Long customerId;
-    private Integer installmentCount;
-    private BigDecimal principalLoanAmount;
-    private BigDecimal monthlyInstallmentAmount;
+    private Long loanId;
+    private BigDecimal paymentAmount;
+    private LocalDate PaymentDate;
     private BigDecimal interestToBePaid;
     private BigDecimal principalToBePaid;
     private BigDecimal remainingPrincipal;
     private LocalDate dueDate;
-
 }

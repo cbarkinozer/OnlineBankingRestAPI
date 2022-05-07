@@ -12,6 +12,10 @@ public enum LoaErrorMessage implements BaseErrorMessage {
     LATE_INTEREST_TAX_CANNOT_BE_NEGATIVE("Late interest tax cannot be negative","Please be sure that you entered no negative total late fee."),
     LOAN_AMOUNT_CANNOT_BE_GREATER_THAN_MAX_AMOUNT("Loan amount cannot be greater than max loan amount."
             ,"you can not enter an amount larger than the max amount(calculated according to given values):"),
+    CUSTOMER_NOT_FOUND("Customer not found","Please check customerId for loan."),
+    MONTHLY_INSTALLMENT_AMOUNT_MUST_BE_POSITIVE("Monthly installment amount must be positive","Please be sure that you entered installment count positive."),
+    INTEREST_AMOUNT_CANNOT_BE_NEGATIVE("Interest amount cannot be negative","Calculations went wrong. The result is not correct."),
+    PRINCIPAL_lOAN_AMOUNT_MUST_BE_POSITIVE("Principal loan amount must be positive","Please be sure that you entered principal loan amount positive."),
     ;
 
     private  final String message;
