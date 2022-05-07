@@ -1,6 +1,8 @@
 package com.cbarkinozer.onlinebankingrestapi.app.loa.service;
 
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaApplyLoanDto;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLateFeeDto;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLoanDto;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaErrorMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,27 @@ public class LoaLoanValidationService {
         }
     }
 
+    public void controlIsParameterNotNull(LoaCalculateLateFeeDto loaCalculateLateFeeDto) {
+
+        boolean hasNull = loaCalculateLateFeeDto.getLateDayCount() == null ||
+                loaCalculateLateFeeDto.getTotalLoan() == null;
+
+        if(hasNull){
+            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
+        }
+    }
+
+    public void controlIsParameterNotNull(LoaApplyLoanDto loaApplyLoanDto) {
+
+        boolean hasNull = loaApplyLoanDto.getCustomerId() == null ||
+                loaApplyLoanDto.getInstallmentCount() == null     ||
+                loaApplyLoanDto.getPrincipalLoanAmount() == null  ||
+                loaApplyLoanDto.getMonthlySalary() == null;
+
+        if(hasNull){
+            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
+        }
+    }
 
     public void controlIsInterestRateNotNegative(BigDecimal interest_rate) {
 
@@ -45,5 +68,39 @@ public class LoaLoanValidationService {
         if(totalLoanPayment.compareTo(BigDecimal.ZERO)>0){
             throw new IllegalFieldException(LoaErrorMessage.TOTAL_LOAN_PAYMENT_MUST_BE_POSITIVE);
         }
+    }
+
+    public void controlIsLateFeeRateNotNegative(BigDecimal lateFeeRate) {
+
+        if(lateFeeRate.compareTo(BigDecimal.ZERO)>=0){
+            throw new IllegalFieldException(LoaErrorMessage.LATE_FEE_RATE_CANNOT_BE_NEGATIVE);
+        }
+    }
+
+    public void controlIsTotalLateFeePositive(BigDecimal totalLateFee) {
+
+        if(totalLateFee.compareTo(BigDecimal.ZERO)>0){
+            throw new IllegalFieldException(LoaErrorMessage.TOTAL_LATE_FEE_MUST_BE_POSITIVE);
+        }
+    }
+
+    public void controlIsLateInterestTaxNotNegative(BigDecimal lateInterestTax) {
+
+        if(lateInterestTax.compareTo(BigDecimal.ZERO)>=0){
+            throw new IllegalFieldException(LoaErrorMessage.LATE_INTEREST_TAX_CANNOT_BE_NEGATIVE);
+        }
+
+    }
+
+    public void controlIsLoanAmountNotGreaterThanMaxLoanAmount(BigDecimal principalLoanAmount, BigDecimal maxLoanAmount) {
+
+        if(principalLoanAmount.compareTo(maxLoanAmount)>0){
+
+            LoaErrorMessage loaErrorMessage = LoaErrorMessage.LOAN_AMOUNT_CANNOT_BE_GREATER_THAN_MAX_AMOUNT;
+            loaErrorMessage.setDetailMessage(String.valueOf(maxLoanAmount));
+
+            throw new IllegalFieldException(loaErrorMessage);
+        }
+
     }
 }
