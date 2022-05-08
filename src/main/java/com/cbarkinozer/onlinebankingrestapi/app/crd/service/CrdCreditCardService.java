@@ -72,8 +72,6 @@ public class CrdCreditCardService {
 
     public CrdCreditCardDto saveCreditCard(CrdCreditCardSaveDto crdCreditCardSaveDto) {
 
-
-
         BigDecimal earning = crdCreditCardSaveDto.getEarning();
         Integer cutOffDay = crdCreditCardSaveDto.getCutOffDay();
 
@@ -83,9 +81,7 @@ public class CrdCreditCardService {
         BigDecimal limit = earning.multiply(BigDecimal.valueOf(3));
         LocalDate cutoffDate = getCutOffDate(cutOffDay);
 
-        LocalDate dueDate = cutoffDate.plusDays(10);
-
-        CrdCreditCard crdCreditCard = createCreditCard(limit, cutoffDate, dueDate);
+        CrdCreditCard crdCreditCard = createCreditCard(limit, cutoffDate);
 
         CrdCreditCardDto crdCreditCardDto = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardDto(crdCreditCard);
 
@@ -99,20 +95,20 @@ public class CrdCreditCardService {
         Month nextMonth = Month.of(currentMonth).plus(1);
 
         crdCreditCardValidationService.isCutOffDayValid(cutOffDay);
-        LocalDate cutoffDateLocal = LocalDate.of(currentYear, nextMonth, cutOffDay);
-        return cutoffDateLocal;
+        LocalDate cutoffDate = LocalDate.of(currentYear, nextMonth, cutOffDay);
+        return cutoffDate;
     }
 
-    private CrdCreditCard createCreditCard(BigDecimal limit, LocalDate cutoffDate, LocalDate dueDate) {
+    private CrdCreditCard createCreditCard(BigDecimal limit, LocalDate cutoffDate) {
 
         Long cusCustomerId = crdCreditCardEntityService.getCurrentCustomerId();
         LocalDate expireDate = LocalDate.now().plusYears(3);
+        LocalDate dueDate = cutoffDate.plusDays(10);
         Long cardNo = StringUtil.getRandomNumber(16);
         Long cvvNo = StringUtil.getRandomNumber(3);
 
         CrdCreditCard crdCreditCard = new CrdCreditCard();
         crdCreditCard.setCusCustomerId(cusCustomerId);
-        crdCreditCard.setCutoffDate(cutoffDate);
         crdCreditCard.setDueDate(dueDate);
         crdCreditCard.setExpireDate(expireDate);
         crdCreditCard.setCardNo(cardNo);
@@ -121,6 +117,8 @@ public class CrdCreditCardService {
         crdCreditCard.setAvailableCardLimit(limit);
         crdCreditCard.setMinimumPaymentAmount(BigDecimal.ZERO);
         crdCreditCard.setCurrentDebt(BigDecimal.ZERO);
+        crdCreditCard.setCutoffDate(cutoffDate);
+        crdCreditCard.setStatusType(GenStatusType.ACTIVE);
 
         crdCreditCard = crdCreditCardEntityService.save(crdCreditCard);
         return crdCreditCard;
@@ -144,16 +142,28 @@ public class CrdCreditCardService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime   = endDate.atStartOfDay();
 
-        List<CrdCreditCardActivity> crdCreditCardActivityList = crdCreditCardActivityEntityService
-                .findCreditCardActivityBetweenDates(
-                        creditCardId,
-                        startDateTime, endDateTime,
-                        pageOptional, sizeOptional
-                );
+        List<CrdCreditCardActivity> crdCreditCardActivityList;
 
-        List<CrdCreditCardActivityDto> result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDtoList(crdCreditCardActivityList);
+        if(pageOptional.isEmpty() || sizeOptional.isEmpty()){
 
-        return result;
+            crdCreditCardActivityList = crdCreditCardActivityEntityService
+                    .findCreditCardActivityBetweenDates(creditCardId,startDateTime,endDateTime);
+
+        }else{
+
+            crdCreditCardActivityList = crdCreditCardActivityEntityService
+                    .findCreditCardActivityBetweenDates(
+                            creditCardId,
+                            startDateTime, endDateTime,
+                            pageOptional, sizeOptional
+                    );
+        }
+
+
+
+        List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDtoList(crdCreditCardActivityList);
+
+        return crdCreditCardActivityDtoList;
     }
 
     public CrdCreditCardActivityDto spendMoney(CrdCreditCardSpendDto crdCreditCardSpendDto) {

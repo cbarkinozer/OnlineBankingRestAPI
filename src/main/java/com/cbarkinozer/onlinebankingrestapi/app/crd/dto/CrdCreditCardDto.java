@@ -19,4 +19,5 @@ public class CrdCreditCardDto {
     private BigDecimal minimumPaymentAmount;
     private LocalDate cutoffDate;
     private LocalDate dueDate;
+    private LocalDate cancelDate;
 }

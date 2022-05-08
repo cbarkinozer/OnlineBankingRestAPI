@@ -24,4 +24,5 @@ FindAll methods get active items, but findById methods get both active and passi
 The bank's interest rate and allocation fee,kkdv and bsmv tax rates are given as constant,
 it can be implemented dynamicaly by pulling data from another API.    
 Interest rate can be zero because some countries (there are 11 countries with sharia laws) prefer it that way.  
-For accounts, iban no is generated as random numbers(simulated), although stored as string. This generation rules can be changed easily.  
+For accounts, iban no is generated as random numbers(simulated), although stored as string. This generation rules can be changed easily.
+Cut off day of the month is the date where your billing cycle happens, and you select this day when creating your credit card.

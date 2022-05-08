@@ -62,7 +62,6 @@ public class AccAccountValidationService {
     public void controlAreFieldsNotNull(AccAccount accAccount) {
 
         boolean hasNullField =
-                        accAccount.getId() == null ||
                         accAccount.getCustomerId() == null ||
                         accAccount.getIbanNo().isBlank() ||
                         accAccount.getCurrentBalance() == null ||

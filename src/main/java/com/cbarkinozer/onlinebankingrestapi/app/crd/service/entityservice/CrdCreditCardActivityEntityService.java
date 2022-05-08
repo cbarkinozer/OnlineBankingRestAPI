@@ -31,6 +31,13 @@ public class CrdCreditCardActivityEntityService extends BaseEntityService<CrdCre
 
     public List<CrdCreditCardActivity> findCreditCardActivityBetweenDates(
             Long creditCardId,
+            LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+        return getDao().findAllByCrdCreditCardIdAndTransactionDateBetween(creditCardId, startDateTime, endDateTime);
+    }
+
+    public List<CrdCreditCardActivity> findCreditCardActivityBetweenDates(
+            Long creditCardId,
             LocalDateTime startDateTime, LocalDateTime endDateTime,
             Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
 

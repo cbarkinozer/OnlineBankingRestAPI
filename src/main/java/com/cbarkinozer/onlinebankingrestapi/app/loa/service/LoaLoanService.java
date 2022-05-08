@@ -125,7 +125,7 @@ public class LoaLoanService {
         BigDecimal subCalculation = INTEREST_RATE.add(BigDecimal.ONE).pow(installmentCount);
 
         BigDecimal monthlyInstallmentAmount = INTEREST_RATE.multiply(subCalculation)
-                .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.UP);
+                .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.HALF_UP);
 
         BigDecimal interestAmount = principalLoanAmount.multiply(INTEREST_RATE);
 

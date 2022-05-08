@@ -1,6 +1,5 @@
 package com.cbarkinozer.onlinebankingrestapi.app.crd.controller;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardActivityService;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.CrdCreditCardService;
@@ -55,10 +54,10 @@ public class CrdCreditCardController {
 
     @Operation(
             tags = "Credit Card Controller",
-            summary = "Get credit card by price interval",
-            description = "Gets products in the range by given min and max."
+            summary = "Get credit card activity by price interval.",
+            description = "Gets credit card activity in the range by given min and max."
     )
-    @GetMapping("/find-by-amount-interval")
+    @GetMapping("/find-activity-by-amount-interval")
     public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>>
     findCreditCardActivityByAmountInterval(@RequestParam BigDecimal min, @RequestParam BigDecimal max){
 
@@ -110,8 +109,8 @@ public class CrdCreditCardController {
 
     @Operation(
             tags = "Credit Card Controller",
-            summary = "Save a credit card",
-            description = "Save a credit card."
+            summary = "Get credit card details",
+            description = "Get details of your credit card."
     )
     @GetMapping("/{id}/cardDetails")
     public ResponseEntity<RestResponse<CrdCreditCardDetailsDto>> getCardDetails(@PathVariable Long id){

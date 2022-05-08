@@ -19,8 +19,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class CrdCreditCardValidationService {
 
-    private final CrdCreditCardEntityService crdCreditCardEntityService;
-
     public void validateCardLimit(BigDecimal currentAvailableLimit) {
 
         if (currentAvailableLimit.compareTo(BigDecimal.ZERO) < 0){
