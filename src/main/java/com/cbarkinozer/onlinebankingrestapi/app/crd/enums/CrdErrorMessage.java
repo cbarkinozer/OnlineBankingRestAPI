@@ -11,6 +11,7 @@ public enum CrdErrorMessage implements BaseErrorMessage {
     EARNING_CANNOT_BE_NEGATIVE("Earning cannot be negative","Please check that your earning is not negative."),
     CREDIT_CARD_NOT_FOUND("Credit card not found","Please be sure that your credit card id belongs to a credit card."),
     FIELDS_CANNOT_BE_NEGATIVE("Fields cannot be negative","Please be sure that you entered all the fields"),
+    CREDIT_CARD_CANCELLED("Credit card cancelled","Please be sure that your card is not cancelled or you entered the correct card credentials"),
     ;
 
     private final String message;

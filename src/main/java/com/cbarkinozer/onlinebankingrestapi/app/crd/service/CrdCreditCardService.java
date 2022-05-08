@@ -175,6 +175,8 @@ public class CrdCreditCardService {
 
         CrdCreditCard crdCreditCard = getCreditCard(crdCreditCardSpendDto);
 
+        crdCreditCardValidationService.controlIsCardCancelled(crdCreditCard.getStatusType());
+
         crdCreditCardValidationService.validateCreditCard(crdCreditCard);
 
         BigDecimal currentDebt = crdCreditCard.getCurrentDebt().add(amount);
@@ -186,9 +188,9 @@ public class CrdCreditCardService {
 
         CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForSpend(amount, description, crdCreditCard);
 
-        CrdCreditCardActivityDto result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
+        CrdCreditCardActivityDto crdCreditCardActivityDto = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
 
-        return result;
+        return crdCreditCardActivityDto;
     }
 
     private CrdCreditCard getCreditCard(CrdCreditCardSpendDto crdCreditCardSpendDto) {
@@ -229,9 +231,14 @@ public class CrdCreditCardService {
     public CrdCreditCardActivityDto refundMoney(Long activityId) {
 
         CrdCreditCardActivity oldCrdCreditCardActivity = crdCreditCardActivityEntityService.getByIdWithControl(activityId);
+
+        Long creditCardId = oldCrdCreditCardActivity.getCrdCreditCardId();
+        CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(creditCardId);
+        crdCreditCardValidationService.controlIsCardCancelled(crdCreditCard.getStatusType());
+
         BigDecimal amount = oldCrdCreditCardActivity.getAmount();
 
-        CrdCreditCard crdCreditCard = updateCreditCardForRefund(oldCrdCreditCardActivity, amount);
+        crdCreditCard = updateCreditCardForRefund(oldCrdCreditCardActivity, amount);
 
         CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForRefund(oldCrdCreditCardActivity, amount, crdCreditCard);
 
@@ -276,8 +283,6 @@ public class CrdCreditCardService {
 
     public CrdCreditCardActivityDto receivePayment(CrdCreditCardPaymentDto crdCreditCardPaymentDto) {
 
-
-
         Long creditCardId = crdCreditCardPaymentDto.getCrdCreditCardId();
         BigDecimal amount = crdCreditCardPaymentDto.getAmount();
 
@@ -285,13 +290,15 @@ public class CrdCreditCardService {
 
         CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(creditCardId);
 
+        crdCreditCardValidationService.controlIsCardCancelled(crdCreditCard.getStatusType());
+
         addLimitToCard(crdCreditCard, amount);
 
         CrdCreditCardActivity crdCreditCardActivity = createCreditCardActivityForPayment(creditCardId, amount);
 
-        CrdCreditCardActivityDto result = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
+        CrdCreditCardActivityDto crdCreditCardActivityDto = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDto(crdCreditCardActivity);
 
-        return result;
+        return crdCreditCardActivityDto;
     }
 
     private CrdCreditCardActivity createCreditCardActivityForPayment(Long crdCreditCardId, BigDecimal amount) {

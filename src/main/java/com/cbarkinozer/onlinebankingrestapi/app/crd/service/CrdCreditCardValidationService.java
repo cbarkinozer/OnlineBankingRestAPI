@@ -4,6 +4,7 @@ import com.cbarkinozer.onlinebankingrestapi.app.crd.dto.CrdCreditCardSpendDto;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.entity.CrdCreditCard;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.enums.CrdErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.crd.service.entityservice.CrdCreditCardEntityService;
+import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenStatusType;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.GenBusinessException;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,6 +19,8 @@ import java.time.LocalDate;
 @Transactional
 @RequiredArgsConstructor
 public class CrdCreditCardValidationService {
+
+    private final CrdCreditCardEntityService crdCreditCardEntityService;
 
     public void validateCardLimit(BigDecimal currentAvailableLimit) {
 
@@ -83,6 +86,14 @@ public class CrdCreditCardValidationService {
 
         if(hasNull){
             throw new IllegalFieldException(CrdErrorMessage.FIELDS_CANNOT_BE_NEGATIVE);
+        }
+    }
+
+    public void controlIsCardCancelled(GenStatusType genStatusType) {
+
+        if(genStatusType == GenStatusType.PASSIVE){
+
+            throw new IllegalFieldException(CrdErrorMessage.CREDIT_CARD_CANCELLED);
         }
     }
 }

@@ -24,7 +24,7 @@ public class CrdCreditCard extends BaseEntity {
     @Column(name = "ID_CUS_CUSTOMER", nullable = false)
     private Long cusCustomerId;
 
-    @Column(name = "CARD_NO", nullable = false)
+    @Column(name = "CARD_NO", nullable = false,unique = true)
     private Long cardNo;
 
     @Column(name = "CVV_NO", nullable = false)

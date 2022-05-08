@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class CrdCreditCardActivityDto {
 
+    private Long id;
     private Long crdCreditCardId;
     private BigDecimal amount;
     private LocalDateTime transactionDate;
