@@ -29,7 +29,9 @@ public enum LoaErrorMessage implements BaseErrorMessage {
     PRINCIPAL_lOAN_AMOUNT_MUST_BE_POSITIVE("Principal loan amount must be positive"
             ,"Please be sure that you entered principal loan amount positive."),
     LOAN_AMOUNT_NOT_ENOUGH_TO_PAY_OFF("Loan amount is not enough to pay off the loan"
-            ,"Please pay as installment or change the amount. Remaining amount to pay off : "),
+            ,"Please pay as installment or change the amount. Remaining amount to pay off :"),
+    DUE_DATE_HAS_NOT_PASSED_YET("Due date has not passed yet"
+            ,"There is still time for the due date :")
     ;
 
     private  final String message;

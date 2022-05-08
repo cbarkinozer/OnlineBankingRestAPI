@@ -34,10 +34,10 @@ public class LoaLoanController {
             summary = "Calculate late fee.",
             description = "Calculate the late fee."
     )
-    @GetMapping("/calculate-late-fee")
-    public ResponseEntity<RestResponse<LoaCalculateLateFeeResponseDto>> calculateLateFee(@RequestBody LoaCalculateLateFeeDto loaCalculateLateFeeDto){
+    @GetMapping("/calculate-late-fee/{id}")
+    public ResponseEntity<RestResponse<LoaCalculateLateFeeResponseDto>> calculateLateFee(@PathVariable Long id){
 
-        LoaCalculateLateFeeResponseDto loaCalculateLateFeeResponseDto = loaLoanService.calculateLateFee(loaCalculateLateFeeDto);
+        LoaCalculateLateFeeResponseDto loaCalculateLateFeeResponseDto = loaLoanService.calculateLateFee(id);
 
         return ResponseEntity.ok(RestResponse.of(loaCalculateLateFeeResponseDto));
     }

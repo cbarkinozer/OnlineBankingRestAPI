@@ -10,6 +10,7 @@ public class LoaCalculateLateFeeResponseDto {
     private BigDecimal totalLateFee;
     private BigDecimal lateFeeRate;
     private BigDecimal lateInterestTax;
+    private Integer lateDayCount;
 
 
 }

@@ -57,12 +57,14 @@ public class LoaLoanService {
         return loaCalculateLoanResponseDto;
     }
 
-    public LoaCalculateLateFeeResponseDto calculateLateFee(LoaCalculateLateFeeDto loaCalculateLateFeeDto) {
+    public LoaCalculateLateFeeResponseDto calculateLateFee(Long id) {
 
-        loaLoanValidationService.controlIsParameterNotNull(loaCalculateLateFeeDto);
+        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
+        LocalDate dueDate = loaLoan.getDueDate();
 
-        BigDecimal totalLoan = loaCalculateLateFeeDto.getTotalLoan();
-        Integer lateDayCount = loaCalculateLateFeeDto.getLateDayCount();
+        Integer lateDayCount = loaLoanValidationService.controlIsLoanDueDatePast(dueDate);
+
+        BigDecimal totalLoan = loaLoan.getPrincipalLoanAmount();
 
         BigDecimal lateFeeRate = INTEREST_RATE.add(INTEREST_RATE.multiply(BigDecimal.valueOf(0.30)));
         BigDecimal totalLateFee = totalLoan.multiply(BigDecimal.valueOf(lateDayCount)).multiply(lateFeeRate)
@@ -71,18 +73,31 @@ public class LoaLoanService {
         BigDecimal totalTax = BSMV_RATE.add(KKDV_RATE);
 
         BigDecimal lateInterestTax = totalLateFee.multiply(totalTax);
+
         totalLateFee = totalLateFee.add(lateInterestTax);
+
+        BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
+        remainingPrincipal = remainingPrincipal.add(totalLateFee);
 
 
         loaLoanValidationService.controlIsLateFeeRateNotNegative(lateFeeRate);
         loaLoanValidationService.controlIsTotalLateFeePositive(totalLateFee);
         loaLoanValidationService.controlIsLateInterestTaxNotNegative(lateInterestTax);
+        loaLoanValidationService.controlIsPrincipalLoanAmountPositive(remainingPrincipal);
+
+
+        loaLoan.setLoanStatusType(LoaLoanStatusType.LATE);
+        loaLoan.setRemainingPrincipal(remainingPrincipal);
+
+        loaLoanEntityService.save(loaLoan);
 
 
         LoaCalculateLateFeeResponseDto loaCalculateLateFeeResponseDto = new LoaCalculateLateFeeResponseDto();
+
         loaCalculateLateFeeResponseDto.setLateFeeRate(lateFeeRate);
         loaCalculateLateFeeResponseDto.setTotalLateFee(totalLateFee);
         loaCalculateLateFeeResponseDto.setLateInterestTax(lateInterestTax);
+        loaCalculateLateFeeResponseDto.setLateDayCount(lateDayCount);
 
         return loaCalculateLateFeeResponseDto;
     }

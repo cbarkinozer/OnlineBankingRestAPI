@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @Transactional
@@ -22,16 +23,6 @@ public class LoaLoanValidationService {
 
         boolean hasNull = loaCalculateLoanDto.getInstallmentCount() == null ||
                           loaCalculateLoanDto.getPrincipalLoanAmount() == null;
-
-        if(hasNull){
-            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
-        }
-    }
-
-    public void controlIsParameterNotNull(LoaCalculateLateFeeDto loaCalculateLateFeeDto) {
-
-        boolean hasNull = loaCalculateLateFeeDto.getLateDayCount() == null ||
-                loaCalculateLateFeeDto.getTotalLoan() == null;
 
         if(hasNull){
             throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
@@ -164,5 +155,20 @@ public class LoaLoanValidationService {
 
             throw new IllegalFieldException(loaErrorMessage);
         }
+    }
+
+    public Integer controlIsLoanDueDatePast(LocalDate dueDate) {
+
+        LocalDate now = LocalDate.now();
+        int lateDayCount = dueDate.compareTo(now);
+
+        if(lateDayCount < 1 ){
+
+            LoaErrorMessage loaErrorMessage = LoaErrorMessage.DUE_DATE_HAS_NOT_PASSED_YET;
+            loaErrorMessage.setDetailMessage(String.valueOf(dueDate));
+
+            throw new IllegalFieldException(loaErrorMessage);
+        }
+        return lateDayCount;
     }
 }
