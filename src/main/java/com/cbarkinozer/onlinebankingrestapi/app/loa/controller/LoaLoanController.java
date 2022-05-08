@@ -71,7 +71,7 @@ public class LoaLoanController {
     @Operation(
             tags = "Loan Controller",
             summary = "Pay installment.",
-            description = "Pay installment."
+            description = "Pay installment of the loan."
     )
     @PostMapping("/pay-installment")
     public ResponseEntity<RestResponse<LoaPayInstallmentResponseDto>> payInstallment(@RequestBody LoaPayInstallmentDto loaPayInstallmentDto){
@@ -81,6 +81,18 @@ public class LoaLoanController {
         return ResponseEntity.ok(RestResponse.of(loaPayInstallmentResponseDto));
     }
 
+    @Operation(
+            tags="Loan Controller",
+            summary = "Pay loan off",
+            description = "Pay the remaining amount and close the loan. "
+    )
+    @DeleteMapping("/pay-loan-off")
+    public ResponseEntity<RestResponse<?>> payLoanOff(@RequestBody LoaPayOffDto loaPayOffDto){
+
+        loaLoanService.payLoanOff(loaPayOffDto);
+
+        return ResponseEntity.ok(RestResponse.empty());
+    }
 
 
 

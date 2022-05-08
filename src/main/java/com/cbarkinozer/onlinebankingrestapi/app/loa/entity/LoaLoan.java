@@ -1,6 +1,7 @@
 package com.cbarkinozer.onlinebankingrestapi.app.loa.entity;
 
 import com.cbarkinozer.onlinebankingrestapi.app.gen.entity.BaseEntity;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaLoanStatusType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,5 +43,9 @@ public class LoaLoan extends BaseEntity {
 
     @Column(name="DUE_DATE",nullable = false)
     private LocalDate dueDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name ="LOAN_STATUS_TYPE", length=30,nullable = false)
+    private LoaLoanStatusType loanStatusType;
 
 }

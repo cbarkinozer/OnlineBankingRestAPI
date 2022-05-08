@@ -3,9 +3,7 @@ package com.cbarkinozer.onlinebankingrestapi.app.loa.service;
 import com.cbarkinozer.onlinebankingrestapi.app.cus.service.entityservice.CusCustomerEntityService;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaApplyLoanDto;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLateFeeDto;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLoanDto;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.*;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,9 +50,29 @@ public class LoaLoanValidationService {
         }
     }
 
-    public void controlIsInterestRateNotNegative(BigDecimal interest_rate) {
+    public void controlIsParameterNotNull(LoaPayInstallmentDto loaPayInstallmentDto) {
 
-        if(interest_rate.compareTo(BigDecimal.ZERO)>=0){
+        boolean hasNull = loaPayInstallmentDto.getLoanId() == null ||
+                loaPayInstallmentDto.getPaymentAmount() == null;
+
+        if(hasNull){
+            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
+        }
+    }
+
+    public void controlIsParameterNotNull(LoaPayOffDto LoaPayOffDto) {
+
+        boolean hasNull = LoaPayOffDto.getLoanId() == null ||
+                LoaPayOffDto.getPaymentAmount() == null;
+
+        if(hasNull){
+            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
+        }
+    }
+
+    public void controlIsInterestRateNotNegative(BigDecimal interestRate) {
+
+        if(interestRate.compareTo(BigDecimal.ZERO)>=0){
             throw new IllegalFieldException(LoaErrorMessage.INTEREST_RATE_CANNOT_BE_NEGATIVE);
         }
     }
@@ -134,6 +152,17 @@ public class LoaLoanValidationService {
 
         if(principalLoanAmount.compareTo(BigDecimal.ZERO)>0){
             throw new IllegalFieldException(LoaErrorMessage.PRINCIPAL_lOAN_AMOUNT_MUST_BE_POSITIVE);
+        }
+    }
+
+    public void controlIsRemainingPrincipalZero(BigDecimal remainingPrincipal) {
+
+        if(remainingPrincipal.compareTo(BigDecimal.ZERO)>0){
+
+            LoaErrorMessage loaErrorMessage = LoaErrorMessage.LOAN_AMOUNT_NOT_ENOUGH_TO_PAY_OFF;
+            loaErrorMessage.setDetailMessage(String.valueOf(remainingPrincipal));
+
+            throw new IllegalFieldException(loaErrorMessage);
         }
     }
 }
