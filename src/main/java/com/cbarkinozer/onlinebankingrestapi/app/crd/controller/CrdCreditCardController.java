@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/credit-card")
+@RequestMapping("api/v1/credit-cards")
 public class CrdCreditCardController {
 
     private final CrdCreditCardService crdCreditCardService;
@@ -125,7 +125,7 @@ public class CrdCreditCardController {
             summary = "Save a credit card",
             description = "Save a credit card."
     )
-    @PostMapping
+    @PostMapping("/save-credit-card")
     public ResponseEntity<RestResponse<MappingJacksonValue>> saveCreditCard(@RequestBody CrdCreditCardSaveDto crdCreditCardSaveDto){
 
         CrdCreditCardDto crdCreditCardDto = crdCreditCardService.saveCreditCard(crdCreditCardSaveDto);

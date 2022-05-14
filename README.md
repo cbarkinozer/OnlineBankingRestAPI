@@ -41,3 +41,4 @@ In the sql package there are sql files that has test data in them for main table
 ACC_ACCOUNT and CRD_CREDIT_CARD table's queries need more work :  
 use regular expression datatype to generate random data in custom format. Also use number instead of money for BigDecimals.    
 
+Crd and Loa class tests only have happy paths, add also validation paths.  
