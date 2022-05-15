@@ -63,7 +63,7 @@ public class LoaLoanValidationService {
 
     public void controlIsInterestRateNotNegative(BigDecimal interestRate) {
 
-        if(interestRate.compareTo(BigDecimal.ZERO)>=0){
+        if(interestRate.compareTo(BigDecimal.ZERO)<0){
             throw new IllegalFieldException(LoaErrorMessage.INTEREST_RATE_CANNOT_BE_NEGATIVE);
         }
     }
@@ -71,7 +71,7 @@ public class LoaLoanValidationService {
 
     public void controlIsInstallmentAmountPositive(BigDecimal monthlyInstallmentAmount) {
 
-        if(monthlyInstallmentAmount.compareTo(BigDecimal.ZERO)>0){
+        if(monthlyInstallmentAmount.compareTo(BigDecimal.ZERO)<=0){
             throw new IllegalFieldException(LoaErrorMessage.INSTALLMENT_AMOUNT_MUST_BE_POSITIVE);
         }
     }

@@ -19,8 +19,8 @@ public class KafkaListenerService {
     private final LogDetailEntityService logDetailEntityService;
 
     @KafkaListener(
-            topics = "${onlinebankingrestapi.kafka.topic}",
-            groupId = "${onlinebankingrestapi.kafka.group-id}"
+            topics = "${cbarkinozer.kafka.topic}",
+            groupId = "${cbarkinozer.kafka.group-id}"
     )
     public void listen(@Payload LogMessage logMessage){
 

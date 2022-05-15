@@ -48,7 +48,6 @@ public class CrdCreditCardService {
     }
 
 
-
     public CrdCreditCardDetailsDto getCardDetails(Long id) {
 
         CrdCreditCard crdCreditCard = crdCreditCardEntityService.getByIdWithControl(id);

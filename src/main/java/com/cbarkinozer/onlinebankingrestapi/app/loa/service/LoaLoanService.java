@@ -36,19 +36,21 @@ public class LoaLoanService {
         Integer installmentCount = loaCalculateLoanDto.getInstallmentCount();
         BigDecimal principalLoanAmount = loaCalculateLoanDto.getPrincipalLoanAmount();
 
-        BigDecimal subCalculation = INTEREST_RATE.add(BigDecimal.ONE).pow(installmentCount);
+        BigDecimal subCalculation = (INTEREST_RATE.add(BigDecimal.ONE)).pow(installmentCount);
 
-        BigDecimal monthlyInstallmentAmount = INTEREST_RATE.multiply(subCalculation)
+        subCalculation = subCalculation.setScale(2,RoundingMode.CEILING);
+
+        BigDecimal monthlyInstallmentAmount = (INTEREST_RATE.multiply(subCalculation))
                 .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.UP);
 
         BigDecimal interestAmount = principalLoanAmount.multiply(INTEREST_RATE);
         BigDecimal totalLoanPayment = principalLoanAmount.add(interestAmount).add(ALLOCATION_FEE);
 
-        LoaCalculateLoanResponseDto loaCalculateLoanResponseDto = new LoaCalculateLoanResponseDto();
-
         loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsInstallmentAmountPositive(monthlyInstallmentAmount);
         loaLoanValidationService.controlIsTotalLoanPaymentPositive(totalLoanPayment);
+
+        LoaCalculateLoanResponseDto loaCalculateLoanResponseDto = new LoaCalculateLoanResponseDto();
 
         loaCalculateLoanResponseDto.setInterestRate(INTEREST_RATE);
         loaCalculateLoanResponseDto.setMonthlyInstallmentAmount(monthlyInstallmentAmount);

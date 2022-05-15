@@ -19,7 +19,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfiguration {
 
-    @Value("${onlinebankingrestapi.kafka.adddress}")
+    @Value("${cbarkinozer.kafka.adddress}")
     private String kafkaAddress;
 
     @Bean

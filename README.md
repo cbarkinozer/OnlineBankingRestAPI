@@ -2,19 +2,60 @@
 A Rest API developed with Spring Boot that allows users to perform banking transactions over the internet.
 
 ### Technologies  
-Java 11, Spring Boot(monolith rest api), Maven(build automation tool), Lombok(eliminates boilerplate code), 
-Hibernate(ORM/code-first approach), Swagger(rest api UI and documentation), PostgreSql (DB),
-Mockitoo(unit testing/mocking layers), Mockaroo (fake data),  
-JWT (jwt json token), Spring Security(Autherization),
-MapStruct(dto-entity mapper), Spring HATEOAS(hateoas),Spring JPA(transactions), Docker(containerization),
-Kafka(message broker), log4j(logging).  
+Java 11
+Spring Boot(rest api)
+Maven(build automation tool)
+Lombok(eliminates boilerplate code)
+Hibernate(ORM/code-first approach)
+MapStruct(dto-entity mapper)
+Swagger(rest api UI and documentation)
+PostgreSql (relational database)
+H2 (relational in app database used for testing)
+Mockitoo (unit testing/mocking layers)
+Mockaroo (fake data api)  
+JWT (jwt json token)
+Spring Security(autherization)
+Spring HATEOAS(hateoas)
+Spring JPA(transactions)
+Kafka(message broker)
+log4j(logging)
+Docker(containerization)
 
 ### Architecture   
 https://ibb.co/NmHVL3b    
 
 ### Design of the packages, entities, and controllers    
 https://ibb.co/2t5Cq3q  
-https://ibb.co/LzWWCpz   
+https://ibb.co/LzWWCpz  
+
+### To Run  
+Pull the project.  
+Copy the "docker-compose.yml" file in a file.  
+Create a "docker-compose.yml" file and add the following code in it.
+```yml
+version: "3"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 101
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+```
+Open cmd and go to that file with "cd path".  
+Open docker desktop(or docker daemon) on the background.  
+Run command "docker compose up -d".  
+Now, a container that has kafka in it is running.  
+Run the project.
 
 ### Design Notes  
 
@@ -42,3 +83,7 @@ ACC_ACCOUNT and CRD_CREDIT_CARD table's queries need more work :
 use regular expression datatype to generate random data in custom format. Also use number instead of money for BigDecimals.    
 
 Crd and Loa class tests only have happy paths, add also validation paths.  
+
+There is a simple producer consumer system that runs with Kafka.  
+This system imitates the banking apps sending sms to users.  
+You can send message to the consumer from the controller.  

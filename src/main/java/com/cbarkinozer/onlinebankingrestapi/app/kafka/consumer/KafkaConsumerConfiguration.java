@@ -19,10 +19,10 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfiguration {
 
-    @Value("${onlinebankingrestapi.kafka.adddress}")
+    @Value("${cbarkinozer.kafka.adddress}")
     private String kafkaAddress;
 
-    @Value("${onlinebankingrestapi.kafka.group-id}")
+    @Value("${cbarkinozer.kafka.group-id}")
     private String kafkaGroupId;
 
     @Bean

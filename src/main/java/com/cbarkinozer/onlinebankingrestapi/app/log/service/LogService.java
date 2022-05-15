@@ -12,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LogService {
 
-    @Value("${onlinebankingrestapi.kafka.topic}")
+    @Value("${cbarkinozer.kafka.topic}")
     private String topic;
 
     private final KafkaTemplate<String, LogMessage> kafkaTemplate;
