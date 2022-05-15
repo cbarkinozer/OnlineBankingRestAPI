@@ -91,14 +91,14 @@ public class LoaLoanValidationService {
 
     public void controlIsTotalLateFeePositive(BigDecimal totalLateFee) {
 
-        if(totalLateFee.compareTo(BigDecimal.ZERO)>0){
+        if(totalLateFee.compareTo(BigDecimal.ZERO)<=0){
             throw new IllegalFieldException(LoaErrorMessage.TOTAL_LATE_FEE_MUST_BE_POSITIVE);
         }
     }
 
     public void controlIsLateInterestTaxNotNegative(BigDecimal lateInterestTax) {
 
-        if(lateInterestTax.compareTo(BigDecimal.ZERO)>=0){
+        if(lateInterestTax.compareTo(BigDecimal.ZERO)<0){
             throw new IllegalFieldException(LoaErrorMessage.LATE_INTEREST_TAX_CANNOT_BE_NEGATIVE);
         }
     }
@@ -126,21 +126,21 @@ public class LoaLoanValidationService {
 
     public void controlIsMonthlyInstallmentAmountPositive(BigDecimal monthlyInstallmentAmount) {
 
-        if(monthlyInstallmentAmount.compareTo(BigDecimal.ZERO)>0){
+        if(monthlyInstallmentAmount.compareTo(BigDecimal.ZERO)<=0){
             throw new IllegalFieldException(LoaErrorMessage.MONTHLY_INSTALLMENT_AMOUNT_MUST_BE_POSITIVE);
         }
     }
 
     public void controlIsInterestAmountNotNegative(BigDecimal interestAmount) {
 
-        if(interestAmount.compareTo(BigDecimal.ZERO)>=0){
+        if(interestAmount.compareTo(BigDecimal.ZERO)<0){
             throw new IllegalFieldException(LoaErrorMessage.INTEREST_AMOUNT_CANNOT_BE_NEGATIVE);
         }
     }
 
     public void controlIsPrincipalLoanAmountPositive(BigDecimal principalLoanAmount) {
 
-        if(principalLoanAmount.compareTo(BigDecimal.ZERO)>0){
+        if(principalLoanAmount.compareTo(BigDecimal.ZERO)<=0){
             throw new IllegalFieldException(LoaErrorMessage.PRINCIPAL_lOAN_AMOUNT_MUST_BE_POSITIVE);
         }
     }

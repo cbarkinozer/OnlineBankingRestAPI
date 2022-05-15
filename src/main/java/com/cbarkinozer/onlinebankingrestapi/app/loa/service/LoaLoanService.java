@@ -24,28 +24,28 @@ public class LoaLoanService {
     private final LoaLoanEntityService loaLoanEntityService;
     private final LoaLoanPaymentEntityService loaLoanPaymentEntityService;
 
-    private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(1.59);
+    private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(1.59/100);
+    private final BigDecimal KKDF_RATE = BigDecimal.valueOf(5/100);
+    private final BigDecimal BSMV_RATE = BigDecimal.valueOf(15/100);
     private final BigDecimal ALLOCATION_FEE = BigDecimal.valueOf(45);
-    private final BigDecimal KKDV_RATE = BigDecimal.valueOf(0.05);
-    private final BigDecimal BSMV_RATE = BigDecimal.valueOf(0.15);
 
-    public LoaCalculateLoanResponseDto calculateLoan(Integer installmentCount, BigDecimal principalLoanAmount) {
+    public LoaCalculateLoanResponseDto calculateLoan(Integer installment, BigDecimal principalLoanAmount) {
 
-        loaLoanValidationService.controlIsParameterNotNull(installmentCount,principalLoanAmount);
+        loaLoanValidationService.controlIsParameterNotNull(installment,principalLoanAmount);
 
-        BigDecimal subCalculation = (INTEREST_RATE.add(BigDecimal.ONE)).pow(installmentCount);
+        BigDecimal installmentCount = BigDecimal.valueOf(installment);
 
-        subCalculation = subCalculation.setScale(2,RoundingMode.CEILING);
+        BigDecimal totalInterestRate = INTEREST_RATE.add(KKDF_RATE).add(BSMV_RATE);
 
-        BigDecimal monthlyInstallmentAmount = (INTEREST_RATE.multiply(subCalculation))
-                .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.UP);
-        monthlyInstallmentAmount = monthlyInstallmentAmount.multiply(principalLoanAmount);
+        BigDecimal maturity = (installmentCount
+                .multiply(BigDecimal.valueOf(30))).divide(BigDecimal.valueOf(36500),RoundingMode.CEILING);
 
-        BigDecimal totalInterest = principalLoanAmount.multiply(INTEREST_RATE).multiply(BigDecimal.valueOf(installmentCount));
+        BigDecimal totalInterest = (principalLoanAmount.multiply(totalInterestRate)).multiply(maturity).multiply(installmentCount);
         BigDecimal totalPayment = principalLoanAmount.add(totalInterest).add(ALLOCATION_FEE);
 
-        BigDecimal effectiveInterestRate = INTEREST_RATE.add(KKDV_RATE).add(BSMV_RATE);
-        BigDecimal annualCostRate = effectiveInterestRate.multiply(BigDecimal.valueOf(12));
+        BigDecimal monthlyInstallmentAmount = totalPayment.divide(installmentCount,RoundingMode.CEILING);
+
+        BigDecimal annualCostRate = totalInterestRate.multiply(BigDecimal.valueOf(12));
 
         loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsInstallmentAmountPositive(monthlyInstallmentAmount);
@@ -76,7 +76,7 @@ public class LoaLoanService {
         BigDecimal totalLateFee = totalLoan.multiply(BigDecimal.valueOf(lateDayCount)).multiply(lateFeeRate)
                 .divide(BigDecimal.valueOf(30),RoundingMode.UP);
 
-        BigDecimal totalTax = BSMV_RATE.add(KKDV_RATE);
+        BigDecimal totalTax = BSMV_RATE.add(KKDF_RATE);
 
         BigDecimal lateInterestTax = totalLateFee.multiply(totalTax);
 
@@ -123,36 +123,40 @@ public class LoaLoanService {
 
         Long customerId = loaLoanApplyLoanDto.getCustomerId();
         BigDecimal principalLoanAmount = loaLoanApplyLoanDto.getPrincipalLoanAmount();
-        Integer installmentCount = loaLoanApplyLoanDto.getInstallmentCount();
+        Integer installment = loaLoanApplyLoanDto.getInstallmentCount();
+        BigDecimal installmentCount = BigDecimal.valueOf(installment);
         BigDecimal monthlySalary = loaLoanApplyLoanDto.getMonthlySalary();
 
         LoaLoan loaLoan = LoaLoanMapper.INSTANCE.convertToLoaLoan(loaLoanApplyLoanDto);
 
-        BigDecimal subCalculation = INTEREST_RATE.add(BigDecimal.ONE).pow(installmentCount);
+        BigDecimal totalInterestRate = INTEREST_RATE.add(KKDF_RATE).add(BSMV_RATE);
 
-        BigDecimal monthlyInstallmentAmount = INTEREST_RATE.multiply(subCalculation)
-                .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.HALF_UP);
+        BigDecimal maturity = (installmentCount
+                .multiply(BigDecimal.valueOf(30))).divide(BigDecimal.valueOf(36500),RoundingMode.CEILING);
+        BigDecimal totalInterest = (principalLoanAmount.multiply(totalInterestRate)).multiply(maturity).multiply(installmentCount);
 
-        BigDecimal interestAmount = principalLoanAmount.multiply(INTEREST_RATE);
+        BigDecimal totalPayment = principalLoanAmount.add(totalInterest).add(ALLOCATION_FEE);
+
+        BigDecimal monthlyInstallmentAmount = totalPayment.divide(installmentCount,RoundingMode.CEILING);
 
         BigDecimal maxInstallmentAmount = monthlySalary.multiply(BigDecimal.valueOf(0.5));
         BigDecimal maxLoanAmount = maxInstallmentAmount
-                .multiply(BigDecimal.valueOf(installmentCount))
+                .multiply(installmentCount)
                 .multiply(BigDecimal.valueOf(0.80));
 
-        LocalDate dueDate = LocalDate.now().plusMonths(installmentCount);
+        LocalDate dueDate = LocalDate.now().plusMonths(installment);
 
 
         loaLoanValidationService.controlIsCustomerExist(customerId);
         loaLoanValidationService.controlIsMonthlyInstallmentAmountPositive(monthlyInstallmentAmount);
-        loaLoanValidationService.controlIsInterestAmountNotNegative(interestAmount);
+        loaLoanValidationService.controlIsInterestAmountNotNegative(totalInterest);
         loaLoanValidationService.controlIsPrincipalLoanAmountPositive(principalLoanAmount);
         loaLoanValidationService.controlIsLoanAmountNotGreaterThanMaxLoanAmount(
                 principalLoanAmount, maxLoanAmount);
 
 
         loaLoan.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
-        loaLoan.setInterestToBePaid(interestAmount);
+        loaLoan.setInterestToBePaid(totalInterest);
         loaLoan.setPrincipalToBePaid(principalLoanAmount);
         loaLoan.setRemainingPrincipal(principalLoanAmount);
         loaLoan.setDueDate(dueDate);
