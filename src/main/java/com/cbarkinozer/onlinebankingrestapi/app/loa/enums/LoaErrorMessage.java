@@ -10,8 +10,8 @@ public enum LoaErrorMessage implements BaseErrorMessage {
             ,"Please be sure you entered all parameters."),
     INSTALLMENT_AMOUNT_MUST_BE_POSITIVE("Installment amount must be positive"
             ,"Please be sure that you entered no negative amounts."),
-    TOTAL_LOAN_PAYMENT_MUST_BE_POSITIVE("Total loan payment must be positive"
-            ,"Please be sure that you entered you no negative loan."),
+    TOTAL_PAYMENT_MUST_BE_POSITIVE("Total payment must be positive"
+            ,"Please be sure that you entered no negative loan."),
     LATE_FEE_RATE_CANNOT_BE_NEGATIVE("Late fee rate cannot be negative"
             ,"Calculations went wrong. The result is not correct."),
     TOTAL_LATE_FEE_MUST_BE_POSITIVE("Total late fee must be positive"

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -22,9 +24,9 @@ public class LoaLoanController {
             description = "Calculate the loan."
     )
     @GetMapping("/calculate-loan")
-    public ResponseEntity<RestResponse<LoaCalculateLoanResponseDto>> calculateLoan(@RequestBody LoaCalculateLoanDto loaCalculateLoanDto){
+    public ResponseEntity<RestResponse<LoaCalculateLoanResponseDto>> calculateLoan(@RequestParam Integer installmentCount, @RequestParam BigDecimal principalLoanAmount ){
 
-        LoaCalculateLoanResponseDto loaCalculateLoanResponseDto = loaLoanService.calculateLoan(loaCalculateLoanDto);
+        LoaCalculateLoanResponseDto loaCalculateLoanResponseDto = loaLoanService.calculateLoan(installmentCount,principalLoanAmount);
 
         return ResponseEntity.ok(RestResponse.of(loaCalculateLoanResponseDto));
     }

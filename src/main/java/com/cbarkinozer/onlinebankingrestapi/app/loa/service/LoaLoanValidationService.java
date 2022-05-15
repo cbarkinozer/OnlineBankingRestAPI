@@ -19,10 +19,9 @@ public class LoaLoanValidationService {
 
     private final CusCustomerEntityService cusCustomerEntityService;
 
-    public void controlIsParameterNotNull(LoaCalculateLoanDto loaCalculateLoanDto) {
+    public void controlIsParameterNotNull(Integer installmentCount, BigDecimal principalLoanAmount) {
 
-        boolean hasNull = loaCalculateLoanDto.getInstallmentCount() == null ||
-                          loaCalculateLoanDto.getPrincipalLoanAmount() == null;
+        boolean hasNull = installmentCount == null || principalLoanAmount == null;
 
         if(hasNull){
             throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
@@ -76,16 +75,16 @@ public class LoaLoanValidationService {
         }
     }
 
-    public void controlIsTotalLoanPaymentPositive(BigDecimal totalLoanPayment) {
+    public void controlIsTotalPaymentPositive(BigDecimal totalPayment) {
 
-        if(totalLoanPayment.compareTo(BigDecimal.ZERO)>0){
-            throw new IllegalFieldException(LoaErrorMessage.TOTAL_LOAN_PAYMENT_MUST_BE_POSITIVE);
+        if(totalPayment.compareTo(BigDecimal.ZERO)<=0){
+            throw new IllegalFieldException(LoaErrorMessage.TOTAL_PAYMENT_MUST_BE_POSITIVE);
         }
     }
 
     public void controlIsLateFeeRateNotNegative(BigDecimal lateFeeRate) {
 
-        if(lateFeeRate.compareTo(BigDecimal.ZERO)>=0){
+        if(lateFeeRate.compareTo(BigDecimal.ZERO)<0){
             throw new IllegalFieldException(LoaErrorMessage.LATE_FEE_RATE_CANNOT_BE_NEGATIVE);
         }
     }

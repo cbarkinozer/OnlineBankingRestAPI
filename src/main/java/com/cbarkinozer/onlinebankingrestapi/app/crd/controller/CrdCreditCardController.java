@@ -75,8 +75,8 @@ public class CrdCreditCardController {
     @GetMapping("/{creditCardId}/activities")
     public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>> findCreditCardActivityBetweenDates(
             @PathVariable Long creditCardId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Optional<Integer> pageOptional,
             Optional<Integer> sizeOptional
     ){

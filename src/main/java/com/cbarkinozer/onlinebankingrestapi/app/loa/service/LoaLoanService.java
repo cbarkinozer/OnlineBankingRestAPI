@@ -25,16 +25,13 @@ public class LoaLoanService {
     private final LoaLoanPaymentEntityService loaLoanPaymentEntityService;
 
     private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(1.59);
-    private final BigDecimal ALLOCATION_FEE = BigDecimal.valueOf(50);
+    private final BigDecimal ALLOCATION_FEE = BigDecimal.valueOf(45);
     private final BigDecimal KKDV_RATE = BigDecimal.valueOf(0.05);
     private final BigDecimal BSMV_RATE = BigDecimal.valueOf(0.15);
 
-    public LoaCalculateLoanResponseDto calculateLoan(LoaCalculateLoanDto loaCalculateLoanDto) {
+    public LoaCalculateLoanResponseDto calculateLoan(Integer installmentCount, BigDecimal principalLoanAmount) {
 
-        loaLoanValidationService.controlIsParameterNotNull(loaCalculateLoanDto);
-
-        Integer installmentCount = loaCalculateLoanDto.getInstallmentCount();
-        BigDecimal principalLoanAmount = loaCalculateLoanDto.getPrincipalLoanAmount();
+        loaLoanValidationService.controlIsParameterNotNull(installmentCount,principalLoanAmount);
 
         BigDecimal subCalculation = (INTEREST_RATE.add(BigDecimal.ONE)).pow(installmentCount);
 
@@ -42,19 +39,26 @@ public class LoaLoanService {
 
         BigDecimal monthlyInstallmentAmount = (INTEREST_RATE.multiply(subCalculation))
                 .divide(subCalculation.subtract(BigDecimal.ONE), RoundingMode.UP);
+        monthlyInstallmentAmount = monthlyInstallmentAmount.multiply(principalLoanAmount);
 
-        BigDecimal interestAmount = principalLoanAmount.multiply(INTEREST_RATE);
-        BigDecimal totalLoanPayment = principalLoanAmount.add(interestAmount).add(ALLOCATION_FEE);
+        BigDecimal totalInterest = principalLoanAmount.multiply(INTEREST_RATE).multiply(BigDecimal.valueOf(installmentCount));
+        BigDecimal totalPayment = principalLoanAmount.add(totalInterest).add(ALLOCATION_FEE);
+
+        BigDecimal effectiveInterestRate = INTEREST_RATE.add(KKDV_RATE).add(BSMV_RATE);
+        BigDecimal annualCostRate = effectiveInterestRate.multiply(BigDecimal.valueOf(12));
 
         loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsInstallmentAmountPositive(monthlyInstallmentAmount);
-        loaLoanValidationService.controlIsTotalLoanPaymentPositive(totalLoanPayment);
+        loaLoanValidationService.controlIsTotalPaymentPositive(totalPayment);
 
         LoaCalculateLoanResponseDto loaCalculateLoanResponseDto = new LoaCalculateLoanResponseDto();
 
         loaCalculateLoanResponseDto.setInterestRate(INTEREST_RATE);
+        loaCalculateLoanResponseDto.setTotalInterest(totalInterest);
         loaCalculateLoanResponseDto.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
-        loaCalculateLoanResponseDto.setTotalLoanPayment(totalLoanPayment);
+        loaCalculateLoanResponseDto.setTotalPayment(totalPayment);
+        loaCalculateLoanResponseDto.setAnnualCostRate(annualCostRate);
+        loaCalculateLoanResponseDto.setAllocationFee(ALLOCATION_FEE);
 
         return loaCalculateLoanResponseDto;
     }
