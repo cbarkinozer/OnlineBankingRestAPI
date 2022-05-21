@@ -75,10 +75,10 @@ public class LoaLoanController {
             summary = "Pay installment.",
             description = "Pay installment of the loan."
     )
-    @PostMapping("/pay-installment")
-    public ResponseEntity<RestResponse<LoaPayInstallmentResponseDto>> payInstallment(@RequestBody LoaPayInstallmentDto loaPayInstallmentDto){
+    @PostMapping("/pay-installment/{id}")
+    public ResponseEntity<RestResponse<LoaPayInstallmentResponseDto>> payInstallment(@PathVariable Long id){
 
-        LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = loaLoanService.payInstallment(loaPayInstallmentDto);
+        LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = loaLoanService.payInstallment(id);
 
         return ResponseEntity.ok(RestResponse.of(loaPayInstallmentResponseDto));
     }
@@ -88,14 +88,12 @@ public class LoaLoanController {
             summary = "Pay loan off",
             description = "Pay the remaining amount and close the loan. "
     )
-    @DeleteMapping("/pay-loan-off")
-    public ResponseEntity<RestResponse<?>> payLoanOff(@RequestBody LoaPayOffDto loaPayOffDto){
+    @DeleteMapping("/pay-loan-off/{id}")
+    public ResponseEntity<RestResponse<LoaPayLoanOffResponseDto>> payLoanOff(@PathVariable Long id){
 
-        loaLoanService.payLoanOff(loaPayOffDto);
+        LoaPayLoanOffResponseDto loaPayLoanOffResponseDto = loaLoanService.payLoanOff(id);
 
-        return ResponseEntity.ok(RestResponse.empty());
+        return ResponseEntity.ok(RestResponse.of(loaPayLoanOffResponseDto));
     }
-
-
 
 }

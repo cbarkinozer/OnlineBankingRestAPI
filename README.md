@@ -2,24 +2,23 @@
 A Rest API developed with Spring Boot that allows users to perform banking transactions over the internet.
 
 ### Technologies  
-Java 11  
-Spring Boot(rest api)  
+Java 11   
+Spring Boot(rest api)   
 Maven(build automation tool)  
 Lombok(eliminates boilerplate code)    
 Hibernate(ORM/code-first approach)    
-MapStruct(dto-entity mapper)   
-Swagger(rest api UI and documentation)  
-PostgreSql (relational database)  
-H2 (relational in app database used for testing)  
-Mockitoo (unit testing/mocking layers)  
-Mockaroo (fake data api)    
-JWT (jwt json token)  
-Spring Security(autherization)  
-Spring HATEOAS(hateoas)  
-Spring JPA(transactions)  
-Kafka(message broker)  
-slf4j(logging)  
-Docker(containerization)  
+MapStruct(dto-entity mapper)    
+Swagger(rest api UI and documentation)   
+PostgreSql (relational database)   
+H2 (relational in app database used for testing)   
+Mockitoo (unit testing/mocking layers)      
+JWT (jwt json token)    
+Spring Security(autherization)     
+Spring HATEOAS(hateoas)   
+Spring JPA(transactions)   
+Kafka(message broker)   
+Docker(containerization)    
+Mockaroo (fake data api)  
 
 ### Architecture   
 https://ibb.co/NmHVL3b    
@@ -65,7 +64,7 @@ There is no update for AccAccount because Accounts do not get updated.
 AccAccount has the method cancel instead of the method delete because Accounts should never be deleted.    
 FindAll methods get active items, but findById methods get both active and passive items.  
 
-The bank's interest rate and allocation fee,kkdv and bsmv tax rates are given as constant,
+The bank's interest rate and allocation fee,tax rates (by default 20% because kkdv + bsmv) are given as constant,
 it can be implemented dynamicaly by pulling data from another API.    
 
 Interest rate can be zero because some countries (there are 11 countries with sharia laws) prefer it that way.  

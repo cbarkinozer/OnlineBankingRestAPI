@@ -31,7 +31,9 @@ public enum LoaErrorMessage implements BaseErrorMessage {
     LOAN_AMOUNT_NOT_ENOUGH_TO_PAY_OFF("Loan amount is not enough to pay off the loan"
             ,"Please pay as installment or change the amount. Remaining amount to pay off :"),
     DUE_DATE_HAS_NOT_PASSED_YET("Due date has not passed yet"
-            ,"There is still time for the due date :")
+            ,"There is still time for the due date :"),
+    REMAINING_PRINCIPAL_MUST_BE_POSITIVE("Remaining principal must be positive",
+            "Calculations went wrong. The result is not correct." ),
     ;
 
     private  final String message;

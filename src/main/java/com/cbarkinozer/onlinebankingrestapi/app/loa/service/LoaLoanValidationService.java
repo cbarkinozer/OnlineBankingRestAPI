@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @Transactional
@@ -34,26 +35,6 @@ public class LoaLoanValidationService {
                 loaApplyLoanDto.getInstallmentCount() == null     ||
                 loaApplyLoanDto.getPrincipalLoanAmount() == null  ||
                 loaApplyLoanDto.getMonthlySalary() == null;
-
-        if(hasNull){
-            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
-        }
-    }
-
-    public void controlIsParameterNotNull(LoaPayInstallmentDto loaPayInstallmentDto) {
-
-        boolean hasNull = loaPayInstallmentDto.getLoanId() == null ||
-                loaPayInstallmentDto.getPaymentAmount() == null;
-
-        if(hasNull){
-            throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
-        }
-    }
-
-    public void controlIsParameterNotNull(LoaPayOffDto LoaPayOffDto) {
-
-        boolean hasNull = LoaPayOffDto.getLoanId() == null ||
-                LoaPayOffDto.getPaymentAmount() == null;
 
         if(hasNull){
             throw new IllegalFieldException(LoaErrorMessage.PARAMETER_CANNOT_BE_NULL);
@@ -145,21 +126,10 @@ public class LoaLoanValidationService {
         }
     }
 
-    public void controlIsRemainingPrincipalZero(BigDecimal remainingPrincipal) {
-
-        if(remainingPrincipal.compareTo(BigDecimal.ZERO)>0){
-
-            LoaErrorMessage loaErrorMessage = LoaErrorMessage.LOAN_AMOUNT_NOT_ENOUGH_TO_PAY_OFF;
-            loaErrorMessage.setDetailMessage(String.valueOf(remainingPrincipal));
-
-            throw new IllegalFieldException(loaErrorMessage);
-        }
-    }
-
-    public Integer controlIsLoanDueDatePast(LocalDate dueDate) {
+    public Long controlIsLoanDueDatePast(LocalDate dueDate) {
 
         LocalDate now = LocalDate.now();
-        int lateDayCount = dueDate.compareTo(now);
+        Long lateDayCount = ChronoUnit.DAYS.between(dueDate, now);
 
         if(lateDayCount < 1 ){
 
@@ -170,4 +140,11 @@ public class LoaLoanValidationService {
         }
         return lateDayCount;
     }
+
+    public void controlIsRemainingPrincipalNotNegative(BigDecimal remainingPrincipal) {
+        if(remainingPrincipal.compareTo(BigDecimal.ZERO)<0){
+            throw new IllegalFieldException(LoaErrorMessage.REMAINING_PRINCIPAL_MUST_BE_POSITIVE);
+        }
+    }
+
 }

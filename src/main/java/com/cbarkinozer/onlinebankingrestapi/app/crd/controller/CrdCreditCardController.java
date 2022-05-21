@@ -70,25 +70,17 @@ public class CrdCreditCardController {
     @Operation(
             tags = "Credit Card Controller",
             summary = "Get a credit card's activities between dates",
-            description = "Gets a credit card's activities between dates pageable."
+            description = "Date format: YYYY-MM-DD. Gets a credit card's activities between dates pageable."
     )
     @GetMapping("/{creditCardId}/activities")
     public ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>> findCreditCardActivityBetweenDates(
             @PathVariable Long creditCardId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Optional<Integer> pageOptional,
-            Optional<Integer> sizeOptional
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ){
 
         List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList =
-                crdCreditCardService.findCreditCardActivityBetweenDates(
-                        creditCardId,
-                        startDate,
-                        endDate,
-                        pageOptional,
-                        sizeOptional
-                );
+                crdCreditCardService.findCreditCardActivityBetweenDates(creditCardId, startDate, endDate);
 
         return ResponseEntity.ok(RestResponse.of(crdCreditCardActivityDtoList));
     }

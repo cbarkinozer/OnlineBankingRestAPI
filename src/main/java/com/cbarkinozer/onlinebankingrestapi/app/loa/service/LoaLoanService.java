@@ -25,8 +25,7 @@ public class LoaLoanService {
     private final LoaLoanPaymentEntityService loaLoanPaymentEntityService;
 
     private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(1.59/100);
-    private final BigDecimal KKDF_RATE = BigDecimal.valueOf(5/100);
-    private final BigDecimal BSMV_RATE = BigDecimal.valueOf(15/100);
+    private final BigDecimal TAX_RATE = BigDecimal.valueOf(20/100); //KKDF + BSMV
     private final BigDecimal ALLOCATION_FEE = BigDecimal.valueOf(45);
 
     public LoaCalculateLoanResponseDto calculateLoan(Integer installment, BigDecimal principalLoanAmount) {
@@ -35,7 +34,7 @@ public class LoaLoanService {
 
         BigDecimal installmentCount = BigDecimal.valueOf(installment);
 
-        BigDecimal totalInterestRate = INTEREST_RATE.add(KKDF_RATE).add(BSMV_RATE);
+        BigDecimal totalInterestRate = INTEREST_RATE.add(TAX_RATE);
 
         BigDecimal maturity = (installmentCount
                 .multiply(BigDecimal.valueOf(30))).divide(BigDecimal.valueOf(36500),RoundingMode.CEILING);
@@ -68,35 +67,30 @@ public class LoaLoanService {
         LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
         LocalDate dueDate = loaLoan.getDueDate();
 
-        Integer lateDayCount = loaLoanValidationService.controlIsLoanDueDatePast(dueDate);
+        Long lateDayCount = loaLoanValidationService.controlIsLoanDueDatePast(dueDate);
 
         BigDecimal totalLoan = loaLoan.getPrincipalLoanAmount();
 
-        BigDecimal lateFeeRate = INTEREST_RATE.add(INTEREST_RATE.multiply(BigDecimal.valueOf(0.30)));
+        BigDecimal lateFeeRate = INTEREST_RATE.add(INTEREST_RATE.multiply(BigDecimal.valueOf(30/100)));
         BigDecimal totalLateFee = totalLoan.multiply(BigDecimal.valueOf(lateDayCount)).multiply(lateFeeRate)
                 .divide(BigDecimal.valueOf(30),RoundingMode.UP);
 
-        BigDecimal totalTax = BSMV_RATE.add(KKDF_RATE);
-
-        BigDecimal lateInterestTax = totalLateFee.multiply(totalTax);
+        BigDecimal lateInterestTax = totalLateFee.multiply(TAX_RATE);
 
         totalLateFee = totalLateFee.add(lateInterestTax);
 
         BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
         remainingPrincipal = remainingPrincipal.add(totalLateFee);
 
-
         loaLoanValidationService.controlIsLateFeeRateNotNegative(lateFeeRate);
         loaLoanValidationService.controlIsTotalLateFeePositive(totalLateFee);
         loaLoanValidationService.controlIsLateInterestTaxNotNegative(lateInterestTax);
         loaLoanValidationService.controlIsPrincipalLoanAmountPositive(remainingPrincipal);
 
-
         loaLoan.setLoanStatusType(LoaLoanStatusType.LATE);
         loaLoan.setRemainingPrincipal(remainingPrincipal);
 
         loaLoanEntityService.save(loaLoan);
-
 
         LoaCalculateLateFeeResponseDto loaCalculateLateFeeResponseDto = new LoaCalculateLateFeeResponseDto();
 
@@ -129,7 +123,7 @@ public class LoaLoanService {
 
         LoaLoan loaLoan = LoaLoanMapper.INSTANCE.convertToLoaLoan(loaLoanApplyLoanDto);
 
-        BigDecimal totalInterestRate = INTEREST_RATE.add(KKDF_RATE).add(BSMV_RATE);
+        BigDecimal totalInterestRate = INTEREST_RATE.add(TAX_RATE);
 
         BigDecimal maturity = (installmentCount
                 .multiply(BigDecimal.valueOf(30))).divide(BigDecimal.valueOf(36500),RoundingMode.CEILING);
@@ -171,24 +165,24 @@ public class LoaLoanService {
     }
 
 
-    public LoaPayInstallmentResponseDto payInstallment(LoaPayInstallmentDto loaPayInstallmentDto) {
+    public LoaPayInstallmentResponseDto payInstallment(Long id) {
 
-        loaLoanValidationService.controlIsParameterNotNull(loaPayInstallmentDto);
+        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
 
-        LoaLoanPayment loanPayment = LoaLoanMapper.INSTANCE.convertToLoaLoanPayment(loaPayInstallmentDto);
-        loanPayment.setPaymentDate(LocalDate.now());
-
-        Long loanId = loanPayment.getLoanId();
-        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(loanId);
-
-        BigDecimal paymentAmount = loanPayment.getPaymentAmount();
+        BigDecimal installmentAmount = loaLoan.getMonthlyInstallmentAmount();
         BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
 
-        remainingPrincipal = remainingPrincipal.subtract(paymentAmount);
+        remainingPrincipal = remainingPrincipal.subtract(installmentAmount);
 
-        loaLoanValidationService.controlIsPrincipalLoanAmountPositive(remainingPrincipal);
+        loaLoanValidationService.controlIsRemainingPrincipalNotNegative(remainingPrincipal);
 
         loaLoan.setRemainingPrincipal(remainingPrincipal);
+
+        LoaLoanPayment loanPayment = new LoaLoanPayment();
+
+        loanPayment.setLoanId(id);
+        loanPayment.setPaymentAmount(installmentAmount);
+        loanPayment.setPaymentDate(LocalDate.now());
 
         loaLoan = loaLoanEntityService.save(loaLoan);
         loanPayment = loaLoanPaymentEntityService.save(loanPayment);
@@ -218,21 +212,23 @@ public class LoaLoanService {
         return loaPayInstallmentResponseDto;
     }
 
-    public void payLoanOff(LoaPayOffDto loaPayOffDto) {
+    public LoaPayLoanOffResponseDto payLoanOff(Long id) {
 
-        loaLoanValidationService.controlIsParameterNotNull(loaPayOffDto);
+        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
 
-        Long loanId = loaPayOffDto.getLoanId();
-        BigDecimal paymentAmount = loaPayOffDto.getPaymentAmount();
+        BigDecimal paidAmount = loaLoan.getRemainingPrincipal();
+        BigDecimal remainingPrincipal = BigDecimal.ZERO;
 
-        LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(loanId);
-        BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
-        remainingPrincipal = remainingPrincipal.subtract(paymentAmount);
-
-        loaLoanValidationService.controlIsRemainingPrincipalZero(remainingPrincipal);
-
+        loaLoan.setRemainingPrincipal(remainingPrincipal);
         loaLoan.setLoanStatusType(LoaLoanStatusType.PAID);
 
-        loaLoanEntityService.save(loaLoan);
+        loaLoan = loaLoanEntityService.save(loaLoan);
+
+        LoaPayLoanOffResponseDto loaPayLoanOffResponseDto = LoaLoanMapper.INSTANCE.convertToLoaPayLoanOffResponseDto(loaLoan);
+
+        loaPayLoanOffResponseDto.setRemainingAmount(remainingPrincipal);
+        loaPayLoanOffResponseDto.setPaidAmount(paidAmount);
+
+        return loaPayLoanOffResponseDto;
     }
 }

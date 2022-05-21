@@ -130,17 +130,10 @@ class CrdCreditCardControllerTest {
 
         List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList = createDummyCrdCreditCardActivityDtoList();
 
-        when(crdCreditCardService.findCreditCardActivityBetweenDates(
-                id,
-                startDate,endDate,
-                java.util.Optional.empty(),java.util.Optional.empty()))
-                .thenReturn(crdCreditCardActivityDtoList);
+        when(crdCreditCardService.findCreditCardActivityBetweenDates(id, startDate,endDate)).thenReturn(crdCreditCardActivityDtoList);
 
         ResponseEntity<RestResponse<List<CrdCreditCardActivityDto>>> result =
-                crdCreditCardController.findCreditCardActivityBetweenDates(
-                        id,
-                        startDate,endDate,
-                        java.util.Optional.empty(),java.util.Optional.empty());
+                crdCreditCardController.findCreditCardActivityBetweenDates(id, startDate,endDate);
 
         assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
         assertEquals(result.getBody().getData(),crdCreditCardActivityDtoList);

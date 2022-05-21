@@ -133,31 +133,16 @@ public class CrdCreditCardService {
         crdCreditCardEntityService.save(crdCreditCard);
     }
 
-    public List<CrdCreditCardActivityDto> findCreditCardActivityBetweenDates(
-            Long creditCardId,
-            LocalDate startDate, LocalDate endDate,
-            Optional<Integer> pageOptional, Optional<Integer> sizeOptional) {
+    public List<CrdCreditCardActivityDto> findCreditCardActivityBetweenDates(Long creditCardId,
+                                                                             LocalDate startDate, LocalDate endDate) {
 
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime   = endDate.atStartOfDay();
 
         List<CrdCreditCardActivity> crdCreditCardActivityList;
 
-        if(pageOptional.isEmpty() || sizeOptional.isEmpty()){
-
-            crdCreditCardActivityList = crdCreditCardActivityEntityService
-                    .findCreditCardActivityBetweenDates(creditCardId,startDateTime,endDateTime);
-
-        }else{
-
-            crdCreditCardActivityList = crdCreditCardActivityEntityService
-                    .findCreditCardActivityBetweenDates(
-                            creditCardId,
-                            startDateTime, endDateTime,
-                            pageOptional, sizeOptional
-                    );
-        }
-
+        crdCreditCardActivityList = crdCreditCardActivityEntityService
+                .findCreditCardActivityBetweenDates(creditCardId,startDateTime,endDateTime);
 
 
         List<CrdCreditCardActivityDto> crdCreditCardActivityDtoList = CrdCreditCardMapper.INSTANCE.convertToCrdCreditCardActivityDtoList(crdCreditCardActivityList);
