@@ -71,8 +71,8 @@ public class LoaLoanService {
 
         BigDecimal totalLoan = loaLoan.getPrincipalLoanAmount();
 
-        BigDecimal lateFeeRate = INTEREST_RATE.add(INTEREST_RATE.multiply(BigDecimal.valueOf(30/100)));
-        BigDecimal totalLateFee = totalLoan.multiply(BigDecimal.valueOf(lateDayCount)).multiply(lateFeeRate)
+        BigDecimal lateFeeRate = INTEREST_RATE.add((INTEREST_RATE.multiply(BigDecimal.valueOf(30/100))));
+        BigDecimal totalLateFee = ((totalLoan.multiply(BigDecimal.valueOf(lateDayCount))).multiply(lateFeeRate))
                 .divide(BigDecimal.valueOf(30),RoundingMode.UP);
 
         BigDecimal lateInterestTax = totalLateFee.multiply(TAX_RATE);

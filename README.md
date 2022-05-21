@@ -28,9 +28,18 @@ https://ibb.co/2t5Cq3q
 https://ibb.co/LzWWCpz  
 
 ### To Run  
-Pull the project.  
-Copy the "docker-compose.yml" file in a file.  
-Create a "docker-compose.yml" file and add the following code in it.
+Pull the project.
+Create a database named "online-banking-rest-api" in postgresql.  
+Open src>main>resources>"application.properties" file.
+Change following:   
+```
+spring.jpa.hibernate.ddl-auto=create  
+spring.datasource.username=[your postgresql username here(probably postgres)]  
+spring.datasource.password=[your postgresql password here]  
+```
+**From here, you can run the application if you will not use kafka messaging feature**
+For Kafka, I used a docker container.   
+Create a "docker-compose.yml" file and add the following code in it.  
 ```yml
 version: "3"
 services:
@@ -78,9 +87,7 @@ Cut off day of the month is the date where your billing cycle happens, and you s
 
 In the sql package there are sql files that has test data in them for main tables created using Mockaroo.   
 ACC_ACCOUNT and CRD_CREDIT_CARD table's queries need more work :  
-use regular expression datatype to generate random data in custom format. Also use number instead of money for BigDecimals.    
-
-Crd and Loa class tests only have happy paths, add also validation paths.  
+use regular expression datatype to generate random data in custom format. Also use number instead of money for BigDecimals.
 
 There is a simple producer consumer system that runs with Kafka.  
 This system imitates the banking apps sending sms to users.  
