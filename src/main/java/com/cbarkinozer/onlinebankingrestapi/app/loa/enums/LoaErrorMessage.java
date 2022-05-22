@@ -34,7 +34,13 @@ public enum LoaErrorMessage implements BaseErrorMessage {
             ,"There is still time for the due date :"),
     REMAINING_PRINCIPAL_MUST_BE_POSITIVE("Remaining principal must be positive",
             "Calculations went wrong. The result is not correct." ),
-    TAX_RATE_CANNOT_BE_NEGATIVE("Tax rate cannot be negative","Please check tax rate." );
+    TAX_RATE_CANNOT_BE_NEGATIVE("Tax rate cannot be negative"
+            , "Please check tax rate." ),
+    INSTALLMENT_COUNT_CANNOT_BE_LARGER_THAN_LIMIT("Installment count cannot be larger than limit"
+            , "Please enter an installment count that is smaller than the limit:" ),
+    LOAN_ALREADY_PAID_OFF("Loan is already paid off"
+            , "Please be sure that you entered correct loan id." ),
+    ;
 
     private  final String message;
     private  String detailMessage;

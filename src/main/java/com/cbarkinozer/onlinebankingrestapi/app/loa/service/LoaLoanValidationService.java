@@ -4,7 +4,9 @@ import com.cbarkinozer.onlinebankingrestapi.app.cus.service.entityservice.CusCus
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.IllegalFieldException;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.*;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.entity.LoaLoan;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaErrorMessage;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaLoanStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,6 +152,22 @@ public class LoaLoanValidationService {
     public void controlIsTaxRateNotNegative(BigDecimal taxRate) {
         if(taxRate.compareTo(BigDecimal.ZERO)<0){
             throw new IllegalFieldException(LoaErrorMessage.TAX_RATE_CANNOT_BE_NEGATIVE);
+        }
+    }
+
+    public void controlIsInstallmentCountNotGreaterThanInstallmentCountLimit(int installmentCount, int installmentCountLimit) {
+        if(installmentCount>installmentCountLimit){
+
+            LoaErrorMessage loaErrorMessage = LoaErrorMessage.INSTALLMENT_COUNT_CANNOT_BE_LARGER_THAN_LIMIT;
+            loaErrorMessage.setDetailMessage(String.valueOf(installmentCountLimit));
+
+            throw new IllegalFieldException(loaErrorMessage);
+        }
+    }
+
+    public void controlIsLoanNotAlreadyPaidOff(LoaLoan loaLoan) {
+        if(loaLoan.getLoanStatusType() == LoaLoanStatusType.PAID){
+            throw new IllegalFieldException(LoaErrorMessage.LOAN_ALREADY_PAID_OFF);
         }
     }
 }

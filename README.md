@@ -83,7 +83,9 @@ Cvv no is created random but should be created using: primary account number, fo
 Credit card no is unique and created random but should be crated according to the Luhn algorithm.  
 The probability of recurrence of the credit card no is not checked because very low(1e+16).  
 
-Cut off day of the month is the date where your billing cycle happens, and you select this day when creating your credit card.
+Cut off day of the month is the date where your billing cycle happens, and you select this day when creating your credit card.  
+
+The installment count limit is 30 years because housing loans has the maximum installment count in the domain with 30 years.   
 
 In the sql package there are sql files that has test data in them for main tables created using Mockaroo.   
 ACC_ACCOUNT and CRD_CREDIT_CARD table's queries need more work :  

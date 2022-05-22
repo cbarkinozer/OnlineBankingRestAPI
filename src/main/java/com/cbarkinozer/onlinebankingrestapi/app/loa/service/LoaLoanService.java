@@ -28,6 +28,7 @@ public class LoaLoanService {
     private final BigDecimal INTEREST_RATE = BigDecimal.valueOf(1.59/100);
     private final BigDecimal TAX_RATE = BigDecimal.valueOf(20/100); //KKDF + BSMV
     private final BigDecimal ALLOCATION_FEE = BigDecimal.valueOf(45);
+    private final int INSTALLMENT_COUNT_LIMIT = 360;
 
     public LoaCalculateLoanResponseDto calculateLoan(Integer installment, BigDecimal principalLoanAmount) {
 
@@ -158,6 +159,7 @@ public class LoaLoanService {
         loaLoanValidationService.controlIsPrincipalLoanAmountPositive(principalLoanAmount);
         loaLoanValidationService.controlIsLoanAmountNotGreaterThanMaxLoanAmount(
                 principalLoanAmount, maxLoanAmount);
+        loaLoanValidationService.controlIsInstallmentCountNotGreaterThanInstallmentCountLimit(installment,INSTALLMENT_COUNT_LIMIT);
 
         loaLoan.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
         loaLoan.setInterestToBePaid(totalInterest);
@@ -244,6 +246,7 @@ public class LoaLoanService {
         BigDecimal paidAmount = loaLoan.getRemainingPrincipal();
         BigDecimal remainingPrincipal = BigDecimal.ZERO;
 
+        loaLoanValidationService.controlIsLoanNotAlreadyPaidOff(loaLoan);
         loaLoanValidationService.controlIsRemainingPrincipalNotNegative(remainingPrincipal);
 
         loaLoan.setRemainingPrincipal(remainingPrincipal);
