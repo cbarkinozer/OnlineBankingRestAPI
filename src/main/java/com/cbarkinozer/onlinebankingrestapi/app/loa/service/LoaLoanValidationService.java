@@ -129,7 +129,7 @@ public class LoaLoanValidationService {
     public Long controlIsLoanDueDatePast(LocalDate dueDate) {
 
         LocalDate now = LocalDate.now();
-        Long lateDayCount = ChronoUnit.DAYS.between(dueDate, now);
+        long lateDayCount = ChronoUnit.DAYS.between(dueDate, now);
 
         if(lateDayCount < 1 ){
 
@@ -147,4 +147,9 @@ public class LoaLoanValidationService {
         }
     }
 
+    public void controlIsTaxRateNotNegative(BigDecimal taxRate) {
+        if(taxRate.compareTo(BigDecimal.ZERO)<0){
+            throw new IllegalFieldException(LoaErrorMessage.TAX_RATE_CANNOT_BE_NEGATIVE);
+        }
+    }
 }

@@ -34,7 +34,7 @@ public enum LoaErrorMessage implements BaseErrorMessage {
             ,"There is still time for the due date :"),
     REMAINING_PRINCIPAL_MUST_BE_POSITIVE("Remaining principal must be positive",
             "Calculations went wrong. The result is not correct." ),
-    ;
+    TAX_RATE_CANNOT_BE_NEGATIVE("Tax rate cannot be negative","Please check tax rate." );
 
     private  final String message;
     private  String detailMessage;

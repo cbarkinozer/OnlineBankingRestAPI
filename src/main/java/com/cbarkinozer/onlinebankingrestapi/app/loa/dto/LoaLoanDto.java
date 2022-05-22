@@ -1,5 +1,6 @@
 package com.cbarkinozer.onlinebankingrestapi.app.loa.dto;
 
+import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaLoanStatusType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -17,5 +18,6 @@ public class LoaLoanDto {
     private BigDecimal principalToBePaid;
     private BigDecimal remainingPrincipal;
     private LocalDate dueDate;
+    private LoaLoanStatusType loanStatusType;
 
 }

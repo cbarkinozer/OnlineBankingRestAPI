@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @Transactional
@@ -47,6 +48,7 @@ public class LoaLoanService {
         BigDecimal annualCostRate = totalInterestRate.multiply(BigDecimal.valueOf(12));
 
         loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
+        loaLoanValidationService.controlIsTaxRateNotNegative(TAX_RATE);
         loaLoanValidationService.controlIsInstallmentAmountPositive(monthlyInstallmentAmount);
         loaLoanValidationService.controlIsTotalPaymentPositive(totalPayment);
 
@@ -65,6 +67,14 @@ public class LoaLoanService {
     public LoaCalculateLateFeeResponseDto calculateLateFee(Long id) {
 
         LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
+
+        LoaCalculateLateFeeResponseDto loaCalculateLateFeeResponseDto = calculateLateFeeAndUpdateLoan(loaLoan);
+
+        return loaCalculateLateFeeResponseDto;
+    }
+
+    private LoaCalculateLateFeeResponseDto calculateLateFeeAndUpdateLoan(LoaLoan loaLoan) {
+
         LocalDate dueDate = loaLoan.getDueDate();
 
         Long lateDayCount = loaLoanValidationService.controlIsLoanDueDatePast(dueDate);
@@ -82,6 +92,7 @@ public class LoaLoanService {
         BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
         remainingPrincipal = remainingPrincipal.add(totalLateFee);
 
+        loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsLateFeeRateNotNegative(lateFeeRate);
         loaLoanValidationService.controlIsTotalLateFeePositive(totalLateFee);
         loaLoanValidationService.controlIsLateInterestTaxNotNegative(lateInterestTax);
@@ -134,20 +145,19 @@ public class LoaLoanService {
         BigDecimal monthlyInstallmentAmount = totalPayment.divide(installmentCount,RoundingMode.CEILING);
 
         BigDecimal maxInstallmentAmount = monthlySalary.multiply(BigDecimal.valueOf(0.5));
-        BigDecimal maxLoanAmount = maxInstallmentAmount
-                .multiply(installmentCount)
+        BigDecimal maxLoanAmount = (maxInstallmentAmount
+                .multiply(installmentCount))
                 .multiply(BigDecimal.valueOf(0.80));
 
         LocalDate dueDate = LocalDate.now().plusMonths(installment);
 
-
         loaLoanValidationService.controlIsCustomerExist(customerId);
+        loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsMonthlyInstallmentAmountPositive(monthlyInstallmentAmount);
         loaLoanValidationService.controlIsInterestAmountNotNegative(totalInterest);
         loaLoanValidationService.controlIsPrincipalLoanAmountPositive(principalLoanAmount);
         loaLoanValidationService.controlIsLoanAmountNotGreaterThanMaxLoanAmount(
                 principalLoanAmount, maxLoanAmount);
-
 
         loaLoan.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
         loaLoan.setInterestToBePaid(totalInterest);
@@ -155,7 +165,6 @@ public class LoaLoanService {
         loaLoan.setRemainingPrincipal(principalLoanAmount);
         loaLoan.setDueDate(dueDate);
         loaLoan.setLoanStatusType(LoaLoanStatusType.CONTINUING);
-
 
         loaLoan = loaLoanEntityService.save(loaLoan);
 
@@ -169,12 +178,15 @@ public class LoaLoanService {
 
         LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
 
+        updateLoanIfDueDatePast(loaLoan);
+
         BigDecimal installmentAmount = loaLoan.getMonthlyInstallmentAmount();
         BigDecimal remainingPrincipal = loaLoan.getRemainingPrincipal();
 
         remainingPrincipal = remainingPrincipal.subtract(installmentAmount);
 
         loaLoanValidationService.controlIsRemainingPrincipalNotNegative(remainingPrincipal);
+        loaLoanValidationService.controlIsInstallmentAmountPositive(installmentAmount);
 
         loaLoan.setRemainingPrincipal(remainingPrincipal);
 
@@ -190,6 +202,17 @@ public class LoaLoanService {
         LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = convertToLoaPayInstallmentResponseDto(loaLoan, loanPayment);
 
         return loaPayInstallmentResponseDto;
+    }
+
+    private void updateLoanIfDueDatePast(LoaLoan loaLoan) {
+
+        LocalDate dueDate = loaLoan.getDueDate();
+
+        long lateDayCount = ChronoUnit.DAYS.between(dueDate, LocalDate.now());
+
+        if(lateDayCount > 0 ){
+            calculateLateFeeAndUpdateLoan(loaLoan);
+        }
     }
 
     private LoaPayInstallmentResponseDto  convertToLoaPayInstallmentResponseDto(LoaLoan loaLoan, LoaLoanPayment loanPayment){
@@ -216,8 +239,12 @@ public class LoaLoanService {
 
         LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
 
+        updateLoanIfDueDatePast(loaLoan);
+
         BigDecimal paidAmount = loaLoan.getRemainingPrincipal();
         BigDecimal remainingPrincipal = BigDecimal.ZERO;
+
+        loaLoanValidationService.controlIsRemainingPrincipalNotNegative(remainingPrincipal);
 
         loaLoan.setRemainingPrincipal(remainingPrincipal);
         loaLoan.setLoanStatusType(LoaLoanStatusType.PAID);

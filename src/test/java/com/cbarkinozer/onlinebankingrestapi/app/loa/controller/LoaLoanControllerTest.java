@@ -1,9 +1,8 @@
 package com.cbarkinozer.onlinebankingrestapi.app.loa.controller;
 
 import com.cbarkinozer.onlinebankingrestapi.app.gen.dto.RestResponse;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLateFeeResponseDto;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaCalculateLoanResponseDto;
-import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.LoaLoanDto;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.dto.*;
+import com.cbarkinozer.onlinebankingrestapi.app.loa.enums.LoaLoanStatusType;
 import com.cbarkinozer.onlinebankingrestapi.app.loa.service.LoaLoanService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -122,14 +121,86 @@ class LoaLoanControllerTest {
 
     @Test
     void shouldApplyLoan() {
-        
+
+        LoaApplyLoanDto loaApplyLoanDto = createDummyLoaApplyLoanDto();
+        LoaLoanDto loaLoanDto = createDummyLoaLoanDto();
+
+        when(loaLoanService.applyLoan(loaApplyLoanDto)).thenReturn(loaLoanDto);
+
+        ResponseEntity<RestResponse<LoaLoanDto>> result = loaLoanController.applyLoan(loaApplyLoanDto);
+
+        assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
+        assertEquals(result.getBody().getData(),loaLoanDto);
+        assertNull(result.getBody().getMessage());
+        assertNotNull(result);
+
+    }
+
+    private LoaApplyLoanDto createDummyLoaApplyLoanDto() {
+
+        LoaApplyLoanDto loaApplyLoanDto = mock(LoaApplyLoanDto.class);
+
+        loaApplyLoanDto.setCustomerId(1L);
+        loaApplyLoanDto.setMonthlySalary(BigDecimal.valueOf(3000));
+        loaApplyLoanDto.setPrincipalLoanAmount(BigDecimal.valueOf(3000));
+        loaApplyLoanDto.setInstallmentCount(24);
+
+        return  loaApplyLoanDto;
     }
 
     @Test
     void shouldPayInstallment() {
+
+        LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = createLoaPayInstallmentResponseDto();
+
+        when(loaLoanService.payInstallment(1L)).thenReturn(loaPayInstallmentResponseDto);
+
+        ResponseEntity<RestResponse<LoaPayInstallmentResponseDto>> result = loaLoanController.payInstallment(1L);
+
+        assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
+        assertEquals(result.getBody().getData(),loaPayInstallmentResponseDto);
+        assertNull(result.getBody().getMessage());
+        assertNotNull(result);
+    }
+
+    private LoaPayInstallmentResponseDto createLoaPayInstallmentResponseDto() {
+
+        LoaPayInstallmentResponseDto loaPayInstallmentResponseDto = mock(LoaPayInstallmentResponseDto.class);
+
+        loaPayInstallmentResponseDto.setLoanId(1L);
+        loaPayInstallmentResponseDto.setPaymentDate(LocalDate.now());
+        loaPayInstallmentResponseDto.setRemainingPrincipal(BigDecimal.valueOf(3000));
+        loaPayInstallmentResponseDto.setDueDate(LocalDate.now().plusMonths(24));
+
+        return  loaPayInstallmentResponseDto;
     }
 
     @Test
     void shouldPayLoanOff() {
+
+        LoaPayLoanOffResponseDto loaPayLoanOffResponseDto = createLoaPayLoanOffResponseDto();
+
+        when(loaLoanService.payLoanOff(1L)).thenReturn(loaPayLoanOffResponseDto);
+
+        ResponseEntity<RestResponse<LoaPayLoanOffResponseDto>> result = loaLoanController.payLoanOff(1L);
+
+        assertTrue(Objects.requireNonNull(result.getBody()).isSuccess());
+        assertEquals(result.getBody().getData(),loaPayLoanOffResponseDto);
+        assertNull(result.getBody().getMessage());
+        assertNotNull(result);
+    }
+
+    private LoaPayLoanOffResponseDto createLoaPayLoanOffResponseDto() {
+
+        LoaPayLoanOffResponseDto loaPayLoanOffResponseDto = mock(LoaPayLoanOffResponseDto.class);
+
+        loaPayLoanOffResponseDto.setId(1L);
+        loaPayLoanOffResponseDto.setCustomerId(1L);
+        loaPayLoanOffResponseDto.setPaidAmount(BigDecimal.valueOf(1000));
+        loaPayLoanOffResponseDto.setRemainingAmount(BigDecimal.valueOf(1000));
+        loaPayLoanOffResponseDto.setLoanStatusType(LoaLoanStatusType.PAID);
+
+        return  loaPayLoanOffResponseDto;
+
     }
 }
