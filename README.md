@@ -1,5 +1,8 @@
 # OnlineBankingRestAPI  
 A Rest API developed with Spring Boot that allows users to perform banking transactions over the internet.
+Time spent on the project : 160+ hours  
+Line of code count : 9000+ lines  
+Prototype project's line of code count and documentation time is not included.  
 
 ### Technologies  
 Java 11   
@@ -24,8 +27,8 @@ Mockaroo (fake data api)
 https://ibb.co/NmHVL3b    
 
 ### Design of the packages, entities, and controllers    
-https://ibb.co/2t5Cq3q  
-https://ibb.co/LzWWCpz  
+https://ibb.co/yYDMvD2   
+https://ibb.co/phwhSBX  
 
 ### To Run  
 Pull the project.
@@ -66,7 +69,9 @@ Now, a container that has kafka in it is running.
 Run the project.
 Open your browser and enter following URL : http://localhost:8080/swagger-ui/index.html
 
-### Design Notes  
+### Documentation    
+
+Detailed documentation link:  
 
 I do not check identity No (citizen id) by algorithm because I want this API to be international.   
 There is no update for AccAccount because Accounts do not get updated.   

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 @RequiredArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class GenBusinessException extends RuntimeException{
 
     private final BaseErrorMessage baseErrorMessage;

@@ -1,16 +1,11 @@
 package com.cbarkinozer.onlinebankingrestapi.app.acc.service.entityservice;
 
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dao.AccAccountActivityDao;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.dao.AccAccountDao;
-import com.cbarkinozer.onlinebankingrestapi.app.acc.dto.AccAccountDto;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.entity.AccAccount;
 import com.cbarkinozer.onlinebankingrestapi.app.acc.enums.AccErrorMessage;
-import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenErrorMessage;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.enums.GenStatusType;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.exceptions.ItemNotFoundException;
 import com.cbarkinozer.onlinebankingrestapi.app.gen.service.BaseEntityService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

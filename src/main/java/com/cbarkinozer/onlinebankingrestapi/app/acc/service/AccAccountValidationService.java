@@ -42,25 +42,20 @@ public class AccAccountValidationService {
     }
 
     public void controlIsAccountIdExist(Long accountId) {
-
         Optional<AccAccount> accountOptional = accAccountEntityService.findAccountById(accountId);
-
         if(accountOptional.isEmpty()){
             throw new IllegalFieldException(AccErrorMessage.ACCOUNT_NOT_FOUND);
         }
     }
 
     public void controlIsCustomerExist(Long currentCustomerId) {
-
         CusCustomer cusCustomer = cusCustomerEntityService.findCustomerById(currentCustomerId);
-
         if(cusCustomer == null){
             throw new IllegalFieldException(CusErrorMessage.CUSTOMER_NOT_FOUND);
         }
     }
 
     public void controlAreFieldsNotNull(AccAccount accAccount) {
-
         boolean hasNullField =
                         accAccount.getCustomerId() == null ||
                         accAccount.getIbanNo().isBlank() ||
@@ -68,9 +63,7 @@ public class AccAccountValidationService {
                         accAccount.getCurrencyType() == null ||
                         accAccount.getAccountType() == null ||
                         accAccount.getStatusType() == null ;
-
         if(hasNullField){
-
             throw new IllegalFieldException(AccErrorMessage.FIELD_CANNOT_BE_NULL);
         }
     }
