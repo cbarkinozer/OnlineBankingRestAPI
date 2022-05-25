@@ -140,7 +140,6 @@ class LoaLoanControllerTest {
 
         LoaApplyLoanDto loaApplyLoanDto = mock(LoaApplyLoanDto.class);
 
-        loaApplyLoanDto.setCustomerId(1L);
         loaApplyLoanDto.setMonthlySalary(BigDecimal.valueOf(3000));
         loaApplyLoanDto.setPrincipalLoanAmount(BigDecimal.valueOf(3000));
         loaApplyLoanDto.setInstallmentCount(24);

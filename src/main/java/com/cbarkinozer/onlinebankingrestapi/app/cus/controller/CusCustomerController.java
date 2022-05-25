@@ -121,7 +121,7 @@ public class CusCustomerController {
             summary = "Delete a customer",
             description = "Deletes a customer by id."
     )
-    @DeleteMapping("/delete-customer/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<RestResponse<?>> deleteCustomer(@PathVariable Long id){
 
         cusCustomerService.deleteCustomer(id);

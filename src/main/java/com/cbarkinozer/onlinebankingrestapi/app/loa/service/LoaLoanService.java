@@ -130,7 +130,7 @@ public class LoaLoanService {
 
         loaLoanValidationService.controlIsParameterNotNull(loaLoanApplyLoanDto);
 
-        Long customerId = loaLoanApplyLoanDto.getCustomerId();
+        Long customerId = loaLoanEntityService.getCurrentCustomerId();
         BigDecimal principalLoanAmount = loaLoanApplyLoanDto.getPrincipalLoanAmount();
         Integer installment = loaLoanApplyLoanDto.getInstallmentCount();
         BigDecimal installmentCount = BigDecimal.valueOf(installment);
@@ -155,7 +155,6 @@ public class LoaLoanService {
 
         LocalDate dueDate = LocalDate.now().plusMonths(installment);
 
-        loaLoanValidationService.controlIsCustomerExist(customerId);
         loaLoanValidationService.controlIsInterestRateNotNegative(INTEREST_RATE);
         loaLoanValidationService.controlIsMonthlyInstallmentAmountPositive(monthlyInstallmentAmount);
         loaLoanValidationService.controlIsInterestAmountNotNegative(totalInterest);
@@ -164,6 +163,7 @@ public class LoaLoanService {
                 principalLoanAmount, maxLoanAmount);
         loaLoanValidationService.controlIsInstallmentCountNotGreaterThanInstallmentCountLimit(installment,INSTALLMENT_COUNT_LIMIT);
 
+        loaLoan.setCustomerId(customerId);
         loaLoan.setMonthlyInstallmentAmount(monthlyInstallmentAmount);
         loaLoan.setInterestToBePaid(totalInterest);
         loaLoan.setPrincipalToBePaid(principalLoanAmount);

@@ -184,7 +184,7 @@ public class CrdCreditCardController {
             summary = "Cancel a credit card",
             description = "Cancel a credit card by making its status passive."
     )
-    @PatchMapping("/cancel/{cardId}")
+    @PatchMapping("/{cardId}")
     public ResponseEntity<RestResponse<?>> cancelCreditCard(@PathVariable Long cardId){
 
         crdCreditCardService.cancelCreditCard(cardId);

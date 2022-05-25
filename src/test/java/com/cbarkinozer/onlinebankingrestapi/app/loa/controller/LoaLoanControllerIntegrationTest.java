@@ -84,7 +84,6 @@ class LoaLoanControllerIntegrationTest extends BaseTest {
     void applyLoan() throws Exception {
 
         LoaApplyLoanDto loaApplyLoanDto = new LoaApplyLoanDto();
-        loaApplyLoanDto.setCustomerId(1L);
         loaApplyLoanDto.setInstallmentCount(24);
         loaApplyLoanDto.setPrincipalLoanAmount(BigDecimal.valueOf(3000));
         loaApplyLoanDto.setMonthlySalary(BigDecimal.valueOf(9000));

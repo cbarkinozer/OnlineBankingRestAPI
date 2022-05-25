@@ -42,7 +42,7 @@ public class AccAccountController {
             summary = "Get an Account",
             description = "Gets an account by id."
     )
-    @GetMapping("/account/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<RestResponse<AccAccountDto>> findAccountById(@PathVariable Long id){
 
         AccAccountDto accAccountDto = accAccountService.findAccountById(id);
@@ -96,7 +96,7 @@ public class AccAccountController {
             summary = "Cancel an Account",
             description = "Deletes a user by canceling (setting the status type passive) by id."
     )
-    @PatchMapping("/cancel-account/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<RestResponse<?>> cancelAccount(@PathVariable Long id){
 
         accAccountService.cancelAccount(id);

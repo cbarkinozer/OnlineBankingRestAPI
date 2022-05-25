@@ -33,8 +33,7 @@ public class LoaLoanValidationService {
 
     public void controlIsParameterNotNull(LoaApplyLoanDto loaApplyLoanDto) {
 
-        boolean hasNull = loaApplyLoanDto.getCustomerId() == null ||
-                loaApplyLoanDto.getInstallmentCount() == null     ||
+        boolean hasNull = loaApplyLoanDto.getInstallmentCount() == null     ||
                 loaApplyLoanDto.getPrincipalLoanAmount() == null  ||
                 loaApplyLoanDto.getMonthlySalary() == null;
 
