@@ -118,6 +118,9 @@ public class LoaLoanService {
 
         LoaLoan loaLoan = loaLoanEntityService.getByIdWithControl(id);
 
+        updateLoanIfDueDatePast(loaLoan);
+        loaLoan = loaLoanEntityService.getByIdWithControl(id);
+
         LoaLoanDto loaLoanDto = LoaLoanMapper.INSTANCE.convertToLoaLoanDto(loaLoan);
 
         return loaLoanDto;

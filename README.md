@@ -71,7 +71,7 @@ Open your browser and enter following URL : http://localhost:8080/swagger-ui/ind
 
 ### Documentation    
 
-Detailed documentation link:  
+Detailed documentation link:  https://docdro.id/YaQaBgq
 
 I do not check identity No (citizen id) by algorithm because I want this API to be international.   
 There is no update for AccAccount because Accounts do not get updated.   
